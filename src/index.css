@@ -1,0 +1,455 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  margin: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto',
+    'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    'Noto Sans', 'Arial', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Hỗ trợ font tiếng Việt */
+input, textarea, select {
+  font-family: inherit;
+}
+
+/* Đảm bảo hiển thị đúng dấu tiếng Việt */
+input[type="text"] {
+  font-feature-settings: "kern" 1;
+  text-rendering: optimizeLegibility;
+}
+
+/* Purple Neon Theme Variables */
+:root {
+  --neon-purple: #8b5cf6;
+  --neon-purple-light: #a78bfa;
+  --neon-purple-dark: #7c3aed;
+  --neon-pink: #ec4899;
+  --neon-blue: #3b82f6;
+  --neon-cyan: #06b6d4;
+  --neon-green: #10b981;
+  --neon-orange: #f59e0b;
+  --neon-glow: 0 0 20px rgba(139, 92, 246, 0.5);
+  --neon-glow-strong: 0 0 30px rgba(139, 92, 246, 0.8);
+  --neon-glow-pink: 0 0 20px rgba(236, 72, 153, 0.5);
+  --neon-glow-blue: 0 0 20px rgba(59, 130, 246, 0.5);
+}
+
+/* Purple Neon Background Themes */
+.bg-gradient-1 {
+  background: #8b5cf6;
+  position: relative;
+}
+
+.bg-gradient-1::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 80%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-gradient-2 {
+  background: #3b82f6;
+  position: relative;
+}
+
+.bg-gradient-2::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 70%, rgba(124, 58, 237, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 70% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-gradient-3 {
+  background: #06b6d4;
+  position: relative;
+}
+
+.bg-gradient-3::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 40% 60%, rgba(167, 139, 250, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 60% 40%, rgba(6, 182, 212, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-gradient-4 {
+  background: #10b981;
+  position: relative;
+}
+
+.bg-gradient-4::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 25% 75%, rgba(139, 92, 246, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 75% 25%, rgba(16, 185, 129, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-gradient-5 {
+  background: #ec4899;
+  position: relative;
+}
+
+.bg-gradient-5::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 35% 65%, rgba(236, 72, 153, 0.3) 0%, transparent 50%),
+              radial-gradient(circle at 65% 35%, rgba(245, 158, 11, 0.3) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.bg-pattern-1 {
+  background-color: #667eea;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-pattern-2 {
+  background-color: #4facfe;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='m0 0 100 100V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+/* Signature canvas styles */
+.signature-canvas {
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  cursor: crosshair;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  touch-action: none; /* Ngăn zoom/scroll trên mobile */
+  user-select: none; /* Ngăn select text */
+}
+
+.signature-canvas:hover {
+  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+/* Ngăn scroll khi đang vẽ */
+.signature-canvas-container {
+  touch-action: none;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Mobile specific styles */
+@media (max-width: 768px) {
+  .signature-canvas {
+    border-width: 2px;
+    border-radius: 8px;
+  }
+
+  /* Ngăn zoom khi double tap */
+  .signature-canvas-container {
+    touch-action: manipulation;
+  }
+}
+
+/* Neon Glass Morphism Effects */
+.glass {
+  background: rgba(139, 92, 246, 0.1);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(139, 92, 246, 0.3);
+  box-shadow: var(--neon-glow);
+  position: relative;
+}
+
+.glass::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.glass-dark {
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(139, 92, 246, 0.2);
+  box-shadow: var(--neon-glow);
+}
+
+/* Neon Button Styles */
+.neon-button {
+  background: var(--neon-purple);
+  border: 2px solid var(--neon-purple);
+  box-shadow: var(--neon-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.neon-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.neon-button:hover::before {
+  left: 100%;
+}
+
+.neon-button:hover {
+  box-shadow: var(--neon-glow-strong);
+  transform: translateY(-2px);
+}
+
+/* Draggable signatures */
+.draggable-signature {
+  cursor: move;
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.draggable-signature:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  z-index: 10;
+}
+
+/* Neon Signature Styles */
+.signature-student {
+  border: 2px solid var(--neon-blue);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.05) 100%);
+  box-shadow: var(--neon-glow-blue);
+  position: relative;
+}
+
+.signature-student::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.signature-teacher {
+  border: 2px solid var(--neon-pink);
+  background: linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(236, 72, 153, 0.05) 100%);
+  box-shadow: var(--neon-glow-pink);
+  position: relative;
+}
+
+.signature-teacher::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Neon Animation Classes */
+.fade-in {
+  animation: neonFadeIn 0.8s ease-out;
+}
+
+@keyframes neonFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.slide-in {
+  animation: neonSlideIn 0.8s ease-out;
+}
+
+@keyframes neonSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-50px) scale(0.9);
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+    filter: blur(0);
+  }
+}
+
+/* Neon Pulse Animation */
+.neon-pulse {
+  animation: neonPulse 2s ease-in-out infinite;
+}
+
+@keyframes neonPulse {
+  0%, 100% {
+    box-shadow: var(--neon-glow);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: var(--neon-glow-strong);
+    transform: scale(1.02);
+  }
+}
+
+/* Neon Glow Hover Effect */
+.neon-hover {
+  transition: all 0.3s ease;
+}
+
+.neon-hover:hover {
+  box-shadow: var(--neon-glow-strong);
+  transform: translateY(-3px) scale(1.02);
+}
+
+/* Tooltip hover/touch cho mobile */
+.signature-tooltip {
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.group:hover .signature-tooltip,
+.group:focus .signature-tooltip,
+.group:active .signature-tooltip {
+  opacity: 1;
+}
+
+/* Touch support cho mobile */
+@media (hover: none) and (pointer: coarse) {
+  .group:active .signature-tooltip {
+    opacity: 1;
+  }
+
+  .group .signature-tooltip {
+    transition: opacity 0.3s ease;
+  }
+}
+
+/* Zoom canvas styles */
+.zoom-canvas {
+  transition: transform 0.2s ease;
+}
+
+.zoom-canvas:active {
+  cursor: grabbing !important;
+}
+
+/* Smooth scrolling cho zoom */
+.zoom-container {
+  scroll-behavior: smooth;
+}
+
+.zoom-container::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.zoom-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.zoom-container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 4px;
+}
+
+.zoom-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+/* Background themes */
+.bg-gradient-1 {
+  background: #8b5cf6;
+}
+
+.bg-gradient-2 {
+  background: #3b82f6;
+}
+
+.bg-gradient-3 {
+  background: #06b6d4;
+}
+
+.bg-gradient-4 {
+  background: #10b981;
+}
+
+.bg-gradient-5 {
+  background: #ec4899;
+}
+
+.bg-pattern-1 {
+  background-color: #7c3aed;
+  background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='4'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.bg-pattern-2 {
+  background-color: #6366f1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='100' viewBox='0 0 100 100'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Cpath d='m0 0 100 100V0z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+.signature-canvas {
+  border: 2px solid #e5e7eb;
+  border-radius: 8px;
+  cursor: crosshair;
+}
+
+.signature-canvas:hover {
+  border-color: #3b82f6;
+}
+
+.draggable-signature {
+  cursor: move;
+  transition: transform 0.2s ease;
+}
+
+.draggable-signature:hover {
+  transform: scale(1.05);
+  z-index: 10;
+}
