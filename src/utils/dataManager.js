@@ -1,6 +1,6 @@
 // Quản lý dữ liệu chữ ký với server API
 export class DataManager {
-  static API_BASE = process.env.NODE_ENV === 'production'
+  static API_BASE = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
     ? '/api'  // Production: sử dụng relative URL
     : 'http://localhost:3001/api'  // Development: sử dụng localhost
 
@@ -123,7 +123,7 @@ export class DataManager {
 
   static getSignatureImage(signatureId) {
     // Trả về URL ảnh từ server
-    const baseUrl = process.env.NODE_ENV === 'production'
+    const baseUrl = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
       ? '' // Production: sử dụng relative URL
       : 'http://localhost:3001' // Development: sử dụng localhost
     const imageUrl = `${baseUrl}/signatures/${signatureId}.png`

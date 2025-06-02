@@ -15,6 +15,9 @@ app.use(cors())
 app.use(express.json({ limit: '10mb' }))
 app.use(express.static('public'))
 
+// Serve static files from dist (production build)
+app.use(express.static('dist'))
+
 // Tạo thư mục signatures nếu chưa có
 const signaturesDir = path.join(__dirname, 'public', 'signatures')
 if (!fs.existsSync(signaturesDir)) {
@@ -195,7 +198,19 @@ app.put('/api/signatures/:id/position', (req, res) => {
   }
 })
 
+// Serve React app cho tất cả routes không phải API
+app.get('*', (req, res) => {
+  // Nếu là API route, skip
+  if (req.path.startsWith('/api') || req.path.startsWith('/signatures')) {
+    return res.status(404).json({ error: 'API endpoint not found' })
+  }
+
+  // Serve React app
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'))
+})
+
 app.listen(PORT, () => {
   console.log(`🚀 Server đang chạy tại http://localhost:${PORT}`)
   console.log(`📁 Ảnh chữ ký được lưu tại: ${signaturesDir}`)
+  console.log(`🌐 Environment: ${process.env.NODE_ENV || 'development'}`)
 })
