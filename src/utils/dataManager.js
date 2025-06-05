@@ -7,6 +7,10 @@ export class DataManager {
     const port = window.location.port
     const protocol = window.location.protocol
 
+    // TEMPORARY FIX: Force production mode để test trên Railway
+    // Uncomment dòng dưới để force production mode:
+    return '/api'
+
     // Nếu không phải localhost hoặc có port khác 3000/3001, thì là production
     const isProduction = (hostname !== 'localhost' && hostname !== '127.0.0.1') ||
                         (port && port !== '3000' && port !== '3001')
@@ -16,7 +20,8 @@ export class DataManager {
       port,
       protocol,
       isProduction,
-      fullUrl: window.location.href
+      fullUrl: window.location.href,
+      willUse: isProduction ? '/api' : 'http://localhost:3001/api'
     })
 
     return isProduction ? '/api' : 'http://localhost:3001/api'
@@ -158,13 +163,8 @@ export class DataManager {
     // Trả về URL ảnh từ server
     if (typeof window === 'undefined') return `http://localhost:3001/signatures/${signatureId}.png`
 
-    const hostname = window.location.hostname
-    const port = window.location.port
-
-    // Nếu không phải localhost hoặc có port khác 3000/3001, thì là production
-    const isProduction = (hostname !== 'localhost' && hostname !== '127.0.0.1') ||
-                        (port && port !== '3000' && port !== '3001')
-    const baseUrl = isProduction ? '' : 'http://localhost:3001'
+    // TEMPORARY FIX: Force production mode
+    const baseUrl = ''
 
     const imageUrl = `${baseUrl}/signatures/${signatureId}.png`
     console.log(`URL ảnh cho ID ${signatureId}:`, imageUrl)
