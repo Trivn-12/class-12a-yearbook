@@ -161,7 +161,7 @@ const SignaturePage = () => {
                     onClick={() => setShowMainContent(false)}
                     className="group relative block px-10 py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold rounded-2xl hover:from-pink-600 hover:to-purple-600 transition-all duration-300 text-lg shadow-2xl transform hover:scale-105"
                   >
-                    <span className="relative z-10">📸 Chia sẻ kỷ niệm</span>
+                    <span className="relative z-10">Chia sẻ kỷ niệm</span>
                     <div className="absolute inset-0 bg-gradient-to-r from-pink-400/20 to-purple-400/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   </Link>
                 </div>

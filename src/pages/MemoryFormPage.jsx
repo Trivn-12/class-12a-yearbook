@@ -117,7 +117,7 @@ const MemoryFormPage = () => {
         <div className="absolute bottom-32 left-1/4 w-40 h-40 bg-white/5 rounded-full blur-2xl animate-pulse delay-1000"></div>
         
         {/* Floating memory icons */}
-        <div className="absolute top-1/4 left-1/3 text-white/20 text-5xl animate-bounce delay-500">📸</div>
+        <div className="absolute top-1/4 left-1/3 text-white/20 text-5xl animate-bounce delay-500">🖼️</div>
         <div className="absolute top-1/3 right-1/4 text-white/15 text-4xl animate-bounce delay-1000">🌸</div>
         <div className="absolute bottom-1/3 left-1/5 text-white/10 text-5xl animate-bounce delay-1500">💝</div>
         <div className="absolute top-1/2 right-1/5 text-white/15 text-3xl animate-bounce delay-2000">✨</div>
@@ -148,7 +148,7 @@ const MemoryFormPage = () => {
               <span>Signature</span>
             </Link>
             <div className="flex items-center gap-2 md:gap-3 px-5 md:px-7 py-3 md:py-4 rounded-xl font-bold neon-button text-white shadow-lg transform scale-105 text-sm md:text-base">
-              <span>📸 Memory</span>
+              <span>Memory</span>
             </div>
             <Link
               to="/gallery"
@@ -170,7 +170,7 @@ const MemoryFormPage = () => {
           <div className="glass rounded-2xl md:rounded-3xl p-6 md:p-8 fade-in shadow-2xl neon-hover">
             <div className="text-center mb-8">
               <div className="inline-flex items-center gap-3 neon-button rounded-full px-6 py-3 mb-4">
-                <span className="text-white font-bold text-lg tracking-wide">📸 Chia sẻ kỷ niệm</span>
+                <span className="text-white font-bold text-lg tracking-wide">Chia sẻ kỷ niệm</span>
               </div>
               <div className="w-16 h-1 bg-gradient-to-r from-pink-500 to-purple-500 mx-auto rounded-full neon-pulse"></div>
             </div>
@@ -307,7 +307,7 @@ const MemoryFormPage = () => {
                       </>
                     ) : (
                       <>
-                        <span className="text-xl">📸</span>
+                        <span className="text-xl">🖼️</span>
                         <span className="font-bold tracking-wide">Chia sẻ kỷ niệm</span>
                         <span className="text-xl">✨</span>
                       </>

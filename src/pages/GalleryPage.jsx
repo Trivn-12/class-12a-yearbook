@@ -158,7 +158,7 @@ const GalleryPage = () => {
               to="/memory-form"
               className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
             >
-              <span>📸 Memory</span>
+              <span>Memory</span>
             </Link>
             <Link
               to="/history"
@@ -292,7 +292,7 @@ const GalleryPage = () => {
                       {/* Icon loại - góc dưới phải */}
                       <div className="absolute bottom-1 right-1 bg-black/50 rounded-full w-5 h-5 flex items-center justify-center">
                         <span className="text-xs">
-                          {signature.contentType === 'memory' ? '📸' :
+                          {signature.contentType === 'memory' ? '🖼️' :
                            signature.type === 'student' ? '🎓' : '👨‍🏫'}
                         </span>
                       </div>

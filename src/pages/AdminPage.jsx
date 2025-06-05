@@ -250,7 +250,7 @@ const AdminPage = () => {
                     : 'text-white hover:bg-white/10'
                 }`}
               >
-                📸 Kỷ niệm ({pendingMemories.length})
+                Kỷ niệm ({pendingMemories.length})
               </button>
               <button
                 onClick={() => setActiveTab('approved')}
@@ -355,13 +355,13 @@ const AdminPage = () => {
           ) : activeTab === 'pending-memories' ? (
             <div className="glass-dark rounded-2xl p-6">
               <h2 className="text-2xl font-bold text-white mb-6 text-center">
-                📸 Ảnh kỷ niệm chờ duyệt ({pendingMemories.length})
+                Ảnh kỷ niệm chờ duyệt ({pendingMemories.length})
               </h2>
 
               {pendingMemories.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-gray-300 text-lg">
-                    📸 Chưa có ảnh kỷ niệm nào chờ duyệt!
+                    Chưa có ảnh kỷ niệm nào chờ duyệt!
                   </p>
                 </div>
               ) : (
@@ -384,7 +384,7 @@ const AdminPage = () => {
                           )}
                           <div className="flex items-center gap-4 text-gray-300">
                             <span className="px-3 py-1 rounded-full text-sm font-medium bg-pink-500/20 text-pink-300">
-                              📸 Kỷ niệm
+                              Kỷ niệm
                             </span>
                             <span className="text-sm">
                               📅 {new Date(memory.timestamp).toLocaleString('vi-VN')}

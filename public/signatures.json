@@ -11,31 +11,7 @@
         "x": 24.90431562797704,
         "y": 55.37865060140964
       }
-    }
-  ],
-  "pendingSignatures": [
-    {
-      "id": "1749144079933",
-      "name": "wwwwwwww",
-      "type": "student",
-      "contentType": "signature",
-      "imagePath": "signatures/1749144079933.png",
-      "timestamp": "2025-06-05T17:21:19.934Z",
-      "status": "pending",
-      "position": {
-        "x": 765.1936623724225,
-        "y": 398.4470329992488
-      }
-    }
-  ],
-  "settings": {
-    "backgroundTheme": "bg-gradient-1",
-    "gridSize": {
-      "rows": 6,
-      "cols": 8
-    }
-  },
-  "pendingMemories": [
+    },
     {
       "id": "1749144272947",
       "name": "www",
@@ -43,11 +19,33 @@
       "contentType": "memory",
       "imagePath": "memories/1749144272947.png",
       "timestamp": "2025-06-05T17:24:32.950Z",
-      "status": "pending",
+      "status": "approved",
       "position": {
         "x": 332.68404935190256,
         "y": 392.4417481323591
       }
+    },
+    {
+      "id": "1749144079933",
+      "name": "wwwwwwww",
+      "type": "student",
+      "contentType": "signature",
+      "imagePath": "signatures/1749144079933.png",
+      "timestamp": "2025-06-05T17:21:19.934Z",
+      "status": "approved",
+      "position": {
+        "x": 765.1936623724225,
+        "y": 398.4470329992488
+      }
     }
-  ]
+  ],
+  "pendingSignatures": [],
+  "settings": {
+    "backgroundTheme": "bg-gradient-1",
+    "gridSize": {
+      "rows": 6,
+      "cols": 8
+    }
+  },
+  "pendingMemories": []
 }
