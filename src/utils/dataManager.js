@@ -4,7 +4,20 @@ export class DataManager {
     if (typeof window === 'undefined') return 'http://localhost:3001/api'
 
     const hostname = window.location.hostname
-    const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1'
+    const port = window.location.port
+    const protocol = window.location.protocol
+
+    // Nếu không phải localhost hoặc có port khác 3000/3001, thì là production
+    const isProduction = (hostname !== 'localhost' && hostname !== '127.0.0.1') ||
+                        (port && port !== '3000' && port !== '3001')
+
+    console.log('Environment detection:', {
+      hostname,
+      port,
+      protocol,
+      isProduction,
+      fullUrl: window.location.href
+    })
 
     return isProduction ? '/api' : 'http://localhost:3001/api'
   }
@@ -146,7 +159,11 @@ export class DataManager {
     if (typeof window === 'undefined') return `http://localhost:3001/signatures/${signatureId}.png`
 
     const hostname = window.location.hostname
-    const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1'
+    const port = window.location.port
+
+    // Nếu không phải localhost hoặc có port khác 3000/3001, thì là production
+    const isProduction = (hostname !== 'localhost' && hostname !== '127.0.0.1') ||
+                        (port && port !== '3000' && port !== '3001')
     const baseUrl = isProduction ? '' : 'http://localhost:3001'
 
     const imageUrl = `${baseUrl}/signatures/${signatureId}.png`
