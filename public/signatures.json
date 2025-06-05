@@ -1,0 +1,36 @@
+{
+  "signatures": [
+    {
+      "id": "1749141020975",
+      "name": "trư",
+      "type": "student",
+      "imagePath": "signatures/1749141020975.png",
+      "timestamp": "2025-06-05T16:30:20.975Z",
+      "status": "approved",
+      "position": {
+        "x": 78.12130670464398,
+        "y": 216.15297287677254
+      }
+    },
+    {
+      "id": "1749141317897",
+      "name": "wwwwww",
+      "type": "student",
+      "imagePath": "signatures/1749141317897.png",
+      "timestamp": "2025-06-05T16:35:17.905Z",
+      "status": "approved",
+      "position": {
+        "x": 70.64670543500245,
+        "y": 23.48871384647842
+      }
+    }
+  ],
+  "pendingSignatures": [],
+  "settings": {
+    "backgroundTheme": "bg-gradient-1",
+    "gridSize": {
+      "rows": 6,
+      "cols": 8
+    }
+  }
+}

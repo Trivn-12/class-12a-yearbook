@@ -4,18 +4,18 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange }, ref) => {
   const canvasRef = useRef(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [isEmpty, setIsEmpty] = useState(true)
-  const [canvasSize, setCanvasSize] = useState({ width: 450, height: 220 })
+  const [canvasSize, setCanvasSize] = useState({ width: 400, height: 400 })
 
   useEffect(() => {
-    // Responsive canvas size
+    // Responsive canvas size - Square format
     const updateCanvasSize = () => {
       const screenWidth = window.innerWidth
       if (screenWidth < 640) { // Mobile
-        setCanvasSize({ width: 300, height: 160 })
+        setCanvasSize({ width: 280, height: 280 })
       } else if (screenWidth < 768) { // Small tablet
-        setCanvasSize({ width: 350, height: 180 })
+        setCanvasSize({ width: 320, height: 320 })
       } else { // Desktop
-        setCanvasSize({ width: 450, height: 220 })
+        setCanvasSize({ width: 400, height: 400 })
       }
     }
 

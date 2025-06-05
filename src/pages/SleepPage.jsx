@@ -35,12 +35,7 @@ function SleepPage() {
           {/* Main Content */}
           <div className="glass rounded-3xl p-8 md:p-12 shadow-2xl neon-hover fade-in">
             
-            {/* Sleep Icon */}
-            <div className="mb-8">
-              <div className="text-8xl md:text-9xl mb-4 animate-pulse">
-                😴
-              </div>
-            </div>
+            {/* Sleep Icon - Removed */}
 
             {/* Main Message */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-relaxed">

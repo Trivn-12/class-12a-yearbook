@@ -175,4 +175,47 @@ export class DataManager {
     // Chuyển canvas thành base64 data để gửi lên server
     return canvas.toDataURL('image/png')
   }
+
+  static async deleteSignature(signatureId) {
+    try {
+      const response = await fetch(`${this.API_BASE}/signatures/${signatureId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result.success
+    } catch (error) {
+      console.error('Lỗi khi xóa chữ ký:', error)
+      return false
+    }
+  }
+
+  static async updateSignature(signatureId, updateData) {
+    try {
+      const response = await fetch(`${this.API_BASE}/signatures/${signatureId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updateData)
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result.signature
+    } catch (error) {
+      console.error('Lỗi khi cập nhật chữ ký:', error)
+      return false
+    }
+  }
 }

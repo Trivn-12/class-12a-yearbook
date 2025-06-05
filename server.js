@@ -179,22 +179,85 @@ app.put('/api/signatures/:id/position', (req, res) => {
   try {
     const { id } = req.params
     const { position } = req.body
-    
+
     const data = loadData()
     const signature = data.signatures.find(s => s.id === id)
-    
+
     if (!signature) {
       return res.status(404).json({ error: 'Không tìm thấy chữ ký' })
     }
 
     signature.position = position
     saveData(data)
-    
+
     res.json({ success: true })
-    
+
   } catch (error) {
     console.error('Lỗi cập nhật vị trí:', error)
     res.status(500).json({ error: 'Lỗi server khi cập nhật vị trí' })
+  }
+})
+
+// API: Xóa chữ ký đã duyệt
+app.delete('/api/signatures/:id', (req, res) => {
+  try {
+    const { id } = req.params
+
+    const data = loadData()
+    const signatureIndex = data.signatures.findIndex(s => s.id === id)
+
+    if (signatureIndex === -1) {
+      return res.status(404).json({ error: 'Không tìm thấy chữ ký' })
+    }
+
+    const signature = data.signatures[signatureIndex]
+
+    // Xóa file ảnh
+    const imagePath = path.join(__dirname, 'public', signature.imagePath)
+    if (fs.existsSync(imagePath)) {
+      fs.unlinkSync(imagePath)
+    }
+
+    // Xóa khỏi danh sách
+    data.signatures.splice(signatureIndex, 1)
+    saveData(data)
+
+    console.log(`Đã xóa chữ ký: ${signature.name}`)
+    res.json({ success: true })
+
+  } catch (error) {
+    console.error('Lỗi xóa chữ ký:', error)
+    res.status(500).json({ error: 'Lỗi server khi xóa chữ ký' })
+  }
+})
+
+// API: Cập nhật thông tin chữ ký đã duyệt
+app.put('/api/signatures/:id', (req, res) => {
+  try {
+    const { id } = req.params
+    const { name, type } = req.body
+
+    if (!name || !type) {
+      return res.status(400).json({ error: 'Thiếu thông tin bắt buộc' })
+    }
+
+    const data = loadData()
+    const signature = data.signatures.find(s => s.id === id)
+
+    if (!signature) {
+      return res.status(404).json({ error: 'Không tìm thấy chữ ký' })
+    }
+
+    signature.name = name.trim()
+    signature.type = type
+    saveData(data)
+
+    console.log(`Đã cập nhật chữ ký: ${signature.name}`)
+    res.json({ success: true, signature })
+
+  } catch (error) {
+    console.error('Lỗi cập nhật chữ ký:', error)
+    res.status(500).json({ error: 'Lỗi server khi cập nhật chữ ký' })
   }
 })
 

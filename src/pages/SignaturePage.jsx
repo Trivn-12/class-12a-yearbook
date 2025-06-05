@@ -147,24 +147,14 @@ const SignaturePage = () => {
                   <h2 className="text-3xl md:text-4xl font-bold text-white mb-2">Xem Bảng Ký</h2>
                   <p className="text-white/70 text-lg">Khám phá tất cả chữ ký</p>
                 </div>
-                <div className="space-y-3">
-                  <Link
-                    to="/gallery"
-                    onClick={() => setShowMainContent(false)}
-                    className="group relative block px-10 py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 text-lg shadow-2xl transform hover:scale-105"
-                  >
-                    <span className="relative z-10">📋 2D Gallery</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </Link>
-                  <Link
-                    to="/gallery-3d"
-                    onClick={() => setShowMainContent(false)}
-                    className="group relative block px-10 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-bold rounded-2xl hover:from-purple-600 hover:to-pink-600 transition-all duration-300 text-lg shadow-2xl transform hover:scale-105"
-                  >
-                    <span className="relative z-10">🌐 3D Galaxy</span>
-                    <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                  </Link>
-                </div>
+                <Link
+                  to="/gallery"
+                  onClick={() => setShowMainContent(false)}
+                  className="group relative inline-block px-10 py-4 bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold rounded-2xl hover:from-blue-600 hover:to-cyan-600 transition-all duration-300 text-lg shadow-2xl transform hover:scale-105"
+                >
+                  <span className="relative z-10">Mở Bảng Ký</span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-2xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </Link>
               </div>
             </div>
           </div>
