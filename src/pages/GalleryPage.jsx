@@ -13,7 +13,6 @@ const GalleryPage = () => {
   const [touchedSignature, setTouchedSignature] = useState(null)
   const [isCapturing, setIsCapturing] = useState(false)
   const canvasRef = useRef(null)
-  const printAreaRef = useRef(null)
 
   // Kiểm tra xem có phải admin không (từ URL parameter)
   const isAdmin = searchParams.get('admin') === 'true'
@@ -113,52 +112,58 @@ const GalleryPage = () => {
     }, 2000)
   }
 
-  // Function để chụp ảnh gallery
+  // Function để chụp ảnh gallery - in tất cả mọi thứ
   const handleCaptureImage = async () => {
-    if (!printAreaRef.current) return
+    if (!canvasRef.current) return
 
     setIsCapturing(true)
-    setMessage('📷 Đang chụp ảnh gallery...')
+    setMessage('📷 Đang chụp ảnh canvas...')
 
     try {
-      // Ẩn các tooltip và admin controls tạm thời
+      // Hiện tất cả tooltips tạm thời để chụp
       const tooltips = document.querySelectorAll('.signature-tooltip')
-      const adminControls = document.querySelectorAll('.admin-control')
+      tooltips.forEach(tooltip => {
+        tooltip.style.opacity = '1'
+        tooltip.style.visibility = 'visible'
+      })
 
-      tooltips.forEach(tooltip => tooltip.style.display = 'none')
-      adminControls.forEach(control => control.style.display = 'none')
-
-      // Chụp ảnh với html2canvas
-      const canvas = await html2canvas(printAreaRef.current, {
-        backgroundColor: '#1e1b4b', // Màu nền tương tự gradient
+      // Chụp ảnh canvas với tất cả nội dung
+      const canvas = await html2canvas(canvasRef.current, {
+        backgroundColor: 'rgba(255, 255, 255, 0.05)', // Nền trong suốt nhẹ
         scale: 2, // Độ phân giải cao hơn
         useCORS: true,
         allowTaint: true,
         foreignObjectRendering: true,
         logging: false,
-        width: printAreaRef.current.scrollWidth,
-        height: printAreaRef.current.scrollHeight
+        width: canvasRef.current.scrollWidth,
+        height: canvasRef.current.scrollHeight,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: canvasRef.current.scrollWidth,
+        windowHeight: canvasRef.current.scrollHeight
       })
 
       // Tạo link download
       const link = document.createElement('a')
-      link.download = `AK25-Gallery-${new Date().toISOString().split('T')[0]}.png`
-      link.href = canvas.toDataURL('image/png')
+      link.download = `AK25-Canvas-${new Date().toISOString().split('T')[0]}.png`
+      link.href = canvas.toDataURL('image/png', 1.0) // Chất lượng tối đa
 
       // Trigger download
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
 
-      setMessage('✅ Đã tải ảnh gallery thành công!')
+      setMessage('✅ Đã tải ảnh canvas thành công!')
 
-      // Hiện lại các tooltip và controls
-      tooltips.forEach(tooltip => tooltip.style.display = '')
-      adminControls.forEach(control => control.style.display = '')
+      // Khôi phục trạng thái tooltips
+      tooltips.forEach(tooltip => {
+        tooltip.style.opacity = ''
+        tooltip.style.visibility = ''
+      })
 
     } catch (error) {
       console.error('Lỗi khi chụp ảnh:', error)
-      setMessage('❌ Không thể chụp ảnh gallery')
+      setMessage('❌ Không thể chụp ảnh canvas')
     } finally {
       setIsCapturing(false)
       // Tự động ẩn message sau 3 giây
@@ -227,14 +232,14 @@ const GalleryPage = () => {
               disabled={isCapturing || signatures.length === 0}
               className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
             >
-              <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In thành ảnh'}</span>
+              <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
             </button>
           </div>
         </nav>
 
         {/* Admin Mode Indicator */}
         {isAdmin && (
-          <div className="admin-control text-center mb-6">
+          <div className="text-center mb-6">
             <div className="inline-flex items-center gap-3 bg-red-500/20 border border-red-400/30 rounded-2xl px-6 py-3 backdrop-blur-sm">
               <span className="text-white font-semibold">Admin Mode - Drag and drop to rearrange</span>
             </div>
@@ -262,7 +267,7 @@ const GalleryPage = () => {
 
         {/* Gallery Canvas Only */}
         <div className="max-w-7xl mx-auto">
-          <div ref={printAreaRef} className="glass rounded-2xl p-6 shadow-2xl neon-hover">
+          <div className="glass rounded-2xl p-6 shadow-2xl neon-hover">
             <div className="text-center mb-6">
               <h3 className="text-white font-bold text-2xl flex items-center justify-center gap-3">
                 <div className="w-3 h-3 bg-pink-500 rounded-full neon-pulse"></div>
@@ -364,7 +369,7 @@ const GalleryPage = () => {
                 })}
 
                 {isAdmin && (
-                  <div className="admin-control absolute bottom-2 right-2 text-white/50 text-xs">
+                  <div className="absolute bottom-2 right-2 text-white/50 text-xs">
                     Drag and drop to rearrange signatures
                   </div>
                 )}
@@ -376,7 +381,7 @@ const GalleryPage = () => {
 
         {/* Admin Access */}
         {!isAdmin && (
-          <div className="admin-control text-center mt-6">
+          <div className="text-center mt-6">
             <Link
               to="/gallery?admin=true"
               className="text-purple-400 hover:text-purple-300 text-sm underline font-medium"
