@@ -155,6 +155,12 @@ const GalleryPage = () => {
               <span>Gallery</span>
             </div>
             <Link
+              to="/memory-form"
+              className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
+            >
+              <span>📸 Memory</span>
+            </Link>
+            <Link
               to="/history"
               className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-white/20 transition-all duration-300 hover:scale-105"
             >

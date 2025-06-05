@@ -24,12 +24,12 @@ function PendingPage() {
 
             {/* Main Message */}
             <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-relaxed">
-              <span className="neon-pulse">Chữ ký đã được gửi!</span>
+              <span className="neon-pulse">Đã gửi thành công!</span>
             </h1>
 
             {/* Subtitle */}
             <p className="text-white/80 text-lg md:text-xl mb-8 leading-relaxed">
-              Cảm ơn bạn đã tham gia! Chữ ký của bạn đang chờ admin duyệt.
+              Cảm ơn bạn đã tham gia! Nội dung của bạn đang chờ admin duyệt.
             </p>
 
             {/* Status Card */}
@@ -40,7 +40,7 @@ function PendingPage() {
                 <div className="w-3 h-3 bg-yellow-500 rounded-full neon-pulse"></div>
               </div>
               <p className="text-yellow-200 text-sm">
-                Admin sẽ xem xét và duyệt chữ ký của bạn trong thời gian sớm nhất.
+                Admin sẽ xem xét và duyệt nội dung của bạn trong thời gian sớm nhất.
               </p>
             </div>
 
@@ -84,9 +84,9 @@ function PendingPage() {
                 <div className="w-2 h-2 bg-cyan-500 rounded-full neon-pulse"></div>
               </h3>
               <div className="text-cyan-200 text-sm space-y-2">
-                <p>• Bạn có thể xem trạng thái chữ ký tại trang History</p>
-                <p>• Chữ ký sẽ xuất hiện trong Gallery sau khi được duyệt</p>
-                <p>• Mỗi người chỉ có thể gửi một chữ ký duy nhất</p>
+                <p>• Bạn có thể xem trạng thái tại trang History</p>
+                <p>• Nội dung sẽ xuất hiện trong Gallery sau khi được duyệt</p>
+                <p>• Mỗi người có thể chia sẻ nhiều nội dung khác nhau</p>
               </div>
             </div>
 

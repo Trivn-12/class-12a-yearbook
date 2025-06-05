@@ -34,5 +34,20 @@
       "rows": 6,
       "cols": 8
     }
-  }
+  },
+  "pendingMemories": [
+    {
+      "id": "1749144272947",
+      "name": "www",
+      "description": "",
+      "contentType": "memory",
+      "imagePath": "memories/1749144272947.png",
+      "timestamp": "2025-06-05T17:24:32.950Z",
+      "status": "pending",
+      "position": {
+        "x": 332.68404935190256,
+        "y": 392.4417481323591
+      }
+    }
+  ]
 }

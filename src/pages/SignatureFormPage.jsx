@@ -128,6 +128,12 @@ const SignatureFormPage = () => {
               <span>Gallery</span>
             </Link>
             <Link
+              to="/memory-form"
+              className="group flex items-center gap-2 md:gap-3 px-5 md:px-7 py-3 md:py-4 rounded-xl font-bold text-white hover:bg-purple-500/20 transition-all duration-300 hover:scale-105 text-sm md:text-base border border-transparent hover:border-purple-500/30 neon-hover"
+            >
+              <span>📸 Memory</span>
+            </Link>
+            <Link
               to="/history"
               className="group flex items-center gap-2 md:gap-3 px-5 md:px-7 py-3 md:py-4 rounded-xl font-bold text-white hover:bg-purple-500/20 transition-all duration-300 hover:scale-105 text-sm md:text-base border border-transparent hover:border-purple-500/30 neon-hover"
             >
