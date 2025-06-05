@@ -40,10 +40,10 @@ const SignaturePage = () => {
 
   return (
     <div className={`min-h-screen ${backgroundTheme} transition-all duration-500 relative overflow-x-hidden`}>
-      {/* Hero Section với 12A */}
+      {/* Hero Section với AK25 */}
       <div className="min-h-screen flex items-center justify-center relative">
         <div className="text-center">
-          {/* Logo 12A với animation cải tiến */}
+          {/* Logo AK25 với animation cải tiến */}
           <div
             className={`text-8xl md:text-9xl font-bold text-white mb-8 transition-all duration-1500 ease-in-out ${
               showMainContent
@@ -58,7 +58,7 @@ const SignaturePage = () => {
               letterSpacing: showMainContent ? '0.2em' : '0.1em'
             }}
           >
-            12A
+            AK25
           </div>
 
           {/* Subtitle animation */}

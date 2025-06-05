@@ -112,7 +112,7 @@ const HistoryPage = () => {
         {/* Header với animation */}
         <div className="text-center mb-8 fade-in">
           <h1 className="text-5xl md:text-6xl font-bold text-white mb-4" style={{ fontFamily: 'serif', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>
-            12A
+            AK25
           </h1>
           <p className="text-white/80 text-lg">Signature History</p>
         </div>

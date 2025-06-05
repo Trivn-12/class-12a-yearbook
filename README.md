@@ -1,6 +1,6 @@
-# 📝 Signature Collection - Class 12A Yearbook
+# 📝 Signature Collection - Class AK25 Yearbook
 
-Ứng dụng thu thập chữ ký kỷ yếu lớp 12A với giao diện đẹp mắt và tính năng quản lý chữ ký.
+Ứng dụng thu thập chữ ký kỷ yếu lớp AK25 với giao diện đẹp mắt và tính năng quản lý chữ ký.
 
 ## ✨ Tính năng
 
@@ -148,7 +148,7 @@ Dự án này được phát hành dưới MIT License.
 
 ## 👨‍💻 Tác giả
 
-**Học sinh lớp 12A** - Dự án kỷ yếu lớp học
+**Học sinh lớp AK25** - Dự án kỷ yếu lớp học
 
 ---
 

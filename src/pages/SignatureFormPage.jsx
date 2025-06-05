@@ -104,7 +104,7 @@ const SignatureFormPage = () => {
         {/* Header với animation */}
         <div className="text-center mb-6 md:mb-8 fade-in">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-2 md:mb-4" style={{ fontFamily: 'serif', textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>
-            12A
+            AK25
           </h1>
           <p className="text-white/80 text-base md:text-lg">Yearbook Signature Collection</p>
         </div>

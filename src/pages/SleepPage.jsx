@@ -14,7 +14,7 @@ function SleepPage() {
     "Thời gian cấp 3 là khi chúng ta tin rằng mình có thể chinh phục cả thế giới.",
     "Những buổi chiều tan học, áo trắng bay trong gió, là ký ức đẹp nhất.",
     "Tuổi trẻ là khi ta dám mơ những giấc mơ lớn nhất.",
-    "Lớp 12A - nơi những tình bạn đẹp nhất được viết nên.",
+    "Lớp AK25 - nơi những tình bạn đẹp nhất được viết nên.",
     "Những giờ học cuối cùng, những kỷ niệm không bao giờ phai mờ.",
     "Tuổi học sinh là khi ta tin vào phép màu của những ước mơ.",
     "Thanh xuân là những ngày ta cười nhiều hơn khóc.",
@@ -27,13 +27,13 @@ function SleepPage() {
     "Thời gian cấp 3 - khi ta viết những câu thơ đầu đời.",
     "Tuổi học sinh là khi ta tin rằng tình yêu sẽ mãi mãi.",
     "Những buổi chiều học bài cùng bạn bè thân thiết.",
-    "Lớp 12A - nơi những ký ức đẹp nhất được lưu giữ.",
+    "Lớp AK25 - nơi những ký ức đẹp nhất được lưu giữ.",
     "Tuổi trẻ là khi ta dám ước mơ về một tương lai rực rỡ.",
     "Ba năm cấp 3 như một cuốn phim đẹp, mỗi khung hình đều đáng nhớ.",
     "Những tiếng cười trong giờ ra chơi vang mãi trong tim.",
     "Tuổi học trò - khi ta tin rằng mình sẽ thay đổi thế giới.",
     "Những buổi tối làm bài tập cùng nhau qua điện thoại.",
-    "Lớp 12A - nơi những câu chuyện đẹp nhất bắt đầu."
+    "Lớp AK25 - nơi những câu chuyện đẹp nhất bắt đầu."
   ]
 
   // Chọn câu ngẫu nhiên khi component mount và mỗi 5 giây
