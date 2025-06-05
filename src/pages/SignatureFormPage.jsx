@@ -43,7 +43,13 @@ const SignatureFormPage = () => {
 
       // Get image data from canvas
       const imageData = DataManager.getImageDataFromCanvas(currentCanvas)
-      console.log('Canvas data:', imageData.substring(0, 50) + '...')
+      console.log('Canvas data length:', imageData?.length)
+      console.log('Canvas data preview:', imageData?.substring(0, 100) + '...')
+
+      // Validate image data
+      if (!imageData || imageData.length < 100) {
+        throw new Error('Invalid canvas data - signature may be empty')
+      }
 
       // Send signature to server
       const newSignature = await DataManager.addSignature({

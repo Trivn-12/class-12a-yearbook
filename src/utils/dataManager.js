@@ -1,8 +1,17 @@
 // Quản lý dữ liệu chữ ký với server API
 export class DataManager {
-  static API_BASE = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
-    ? '/api'  // Production: sử dụng relative URL
-    : 'http://localhost:3001/api'  // Development: sử dụng localhost
+  static getApiBase() {
+    if (typeof window === 'undefined') return 'http://localhost:3001/api'
+
+    const hostname = window.location.hostname
+    const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1'
+
+    return isProduction ? '/api' : 'http://localhost:3001/api'
+  }
+
+  static get API_BASE() {
+    return this.getApiBase()
+  }
 
   static async loadData() {
     try {
@@ -29,9 +38,15 @@ export class DataManager {
 
   static async addSignature(signatureData) {
     try {
-      console.log('Đang gửi chữ ký lên server:', signatureData)
+      const apiUrl = `${this.API_BASE}/signatures`
+      console.log('API URL:', apiUrl)
+      console.log('Đang gửi chữ ký lên server:', {
+        name: signatureData.name,
+        type: signatureData.type,
+        imageDataLength: signatureData.imageData?.length || 0
+      })
 
-      const response = await fetch(`${this.API_BASE}/signatures`, {
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,8 +58,13 @@ export class DataManager {
         })
       })
 
+      console.log('Response status:', response.status)
+      console.log('Response ok:', response.ok)
+
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        const errorText = await response.text()
+        console.error('Server error response:', errorText)
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
       }
 
       const result = await response.json()
@@ -123,9 +143,12 @@ export class DataManager {
 
   static getSignatureImage(signatureId) {
     // Trả về URL ảnh từ server
-    const baseUrl = (typeof window !== 'undefined' && window.location.hostname !== 'localhost')
-      ? '' // Production: sử dụng relative URL
-      : 'http://localhost:3001' // Development: sử dụng localhost
+    if (typeof window === 'undefined') return `http://localhost:3001/signatures/${signatureId}.png`
+
+    const hostname = window.location.hostname
+    const isProduction = hostname !== 'localhost' && hostname !== '127.0.0.1'
+    const baseUrl = isProduction ? '' : 'http://localhost:3001'
+
     const imageUrl = `${baseUrl}/signatures/${signatureId}.png`
     console.log(`URL ảnh cho ID ${signatureId}:`, imageUrl)
     return imageUrl
