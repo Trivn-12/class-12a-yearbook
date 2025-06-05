@@ -117,21 +117,13 @@ function SleepPage() {
                 }}
               >
                 <span className="relative z-10 flex items-center justify-center">
-                  <span className="font-bold tracking-wide">Tỉnh giấc</span>
+                  <span className="font-bold tracking-wide">Tiếp tục</span>
                 </span>
                 <div className="absolute inset-0 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-3xl blur opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               </button>
             ) : (
-              <div className="space-y-4">
-                <div className="text-6xl animate-bounce">
-                  😊
-                </div>
-                <p className="text-white text-xl font-bold animate-pulse">
-                  Đang tỉnh giấc từ những kỷ niệm đẹp...
-                </p>
-                <div className="flex justify-center">
-                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
-                </div>
+              <div className="flex justify-center">
+                <div className="w-12 h-12 border-4 border-white border-t-transparent rounded-full animate-spin"></div>
               </div>
             )}
 
@@ -148,11 +140,6 @@ function SleepPage() {
                 }`}>
                   "{currentQuote}"
                 </p>
-              </div>
-              <div className="mt-4 text-center">
-                <span className="text-cyan-300/60 text-xs">
-                  💫 Câu này sẽ thay đổi mỗi 5 giây 💫
-                </span>
               </div>
             </div>
 

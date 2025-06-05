@@ -1,16 +1,30 @@
 {
-  "signatures": [],
-  "pendingSignatures": [
+  "signatures": [
     {
       "id": "1749142229893",
       "name": "tesst",
       "type": "student",
       "imagePath": "signatures/1749142229893.png",
       "timestamp": "2025-06-05T16:50:29.895Z",
+      "status": "approved",
+      "position": {
+        "x": 24.90431562797704,
+        "y": 55.37865060140964
+      }
+    }
+  ],
+  "pendingSignatures": [
+    {
+      "id": "1749144079933",
+      "name": "wwwwwwww",
+      "type": "student",
+      "contentType": "signature",
+      "imagePath": "signatures/1749144079933.png",
+      "timestamp": "2025-06-05T17:21:19.934Z",
       "status": "pending",
       "position": {
-        "x": 246.90431562797704,
-        "y": 15.378650601409639
+        "x": 765.1936623724225,
+        "y": 398.4470329992488
       }
     }
   ],

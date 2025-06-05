@@ -255,17 +255,20 @@ const GalleryPage = () => {
                         {signature.name}
                       </div>
 
-                      {/* Chữ ký - chiếm toàn bộ không gian */}
+                      {/* Nội dung - chiếm toàn bộ không gian */}
                       <div className="w-full h-full flex items-center justify-center">
                         {(() => {
-                          const imageData = getSignatureImage(signature.id)
-                          console.log(`Gallery: Hiển thị ảnh cho ${signature.name} (ID: ${signature.id}):`, !!imageData)
+                          const isMemory = signature.contentType === 'memory'
+                          const imageData = isMemory
+                            ? DataManager.getMemoryImage(signature.id)
+                            : getSignatureImage(signature.id)
+                          console.log(`Gallery: Hiển thị ${isMemory ? 'kỷ niệm' : 'chữ ký'} cho ${signature.name} (ID: ${signature.id}):`, !!imageData)
 
                           return imageData ? (
                             <img
                               src={imageData}
-                              alt={`Chữ ký của ${signature.name}`}
-                              className="max-w-full max-h-full object-contain bg-white rounded"
+                              alt={isMemory ? `Kỷ niệm của ${signature.name}` : `Chữ ký của ${signature.name}`}
+                              className={`max-w-full max-h-full ${isMemory ? 'object-cover' : 'object-contain'} bg-white rounded`}
                               draggable={false}
                               onError={(e) => {
                                 console.error('Lỗi load ảnh:', e)
@@ -283,7 +286,8 @@ const GalleryPage = () => {
                       {/* Icon loại - góc dưới phải */}
                       <div className="absolute bottom-1 right-1 bg-black/50 rounded-full w-5 h-5 flex items-center justify-center">
                         <span className="text-xs">
-                          {signature.type === 'student' ? '🎓' : '👨‍🏫'}
+                          {signature.contentType === 'memory' ? '📸' :
+                           signature.type === 'student' ? '🎓' : '👨‍🏫'}
                         </span>
                       </div>
                     </div>

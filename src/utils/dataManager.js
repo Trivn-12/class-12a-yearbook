@@ -218,4 +218,104 @@ export class DataManager {
       return false
     }
   }
+
+  static async addMemory(memoryData) {
+    try {
+      const apiUrl = `${this.API_BASE}/memories`
+      console.log('API URL:', apiUrl)
+      console.log('Đang gửi ảnh kỷ niệm lên server:', {
+        name: memoryData.name,
+        description: memoryData.description,
+        imageDataLength: memoryData.imageData?.length || 0
+      })
+
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: memoryData.name,
+          description: memoryData.description,
+          imageData: memoryData.imageData
+        })
+      })
+
+      console.log('Response status:', response.status)
+      console.log('Response ok:', response.ok)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Server error response:', errorText)
+        throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`)
+      }
+
+      const result = await response.json()
+      console.log('Server response:', result)
+      return result.memory
+    } catch (error) {
+      console.error('Lỗi khi gửi ảnh kỷ niệm lên server:', error)
+      throw error
+    }
+  }
+
+  static async approveMemory(memoryId, position = null) {
+    try {
+      const response = await fetch(`${this.API_BASE}/memories/${memoryId}/approve`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ position })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result.success
+    } catch (error) {
+      console.error('Lỗi khi duyệt ảnh kỷ niệm:', error)
+      return false
+    }
+  }
+
+  static async rejectMemory(memoryId) {
+    try {
+      const response = await fetch(`${this.API_BASE}/memories/${memoryId}/reject`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result.success
+    } catch (error) {
+      console.error('Lỗi khi từ chối ảnh kỷ niệm:', error)
+      return false
+    }
+  }
+
+  static getMemoryImage(memoryId) {
+    // Trả về URL ảnh kỷ niệm từ server
+    if (typeof window === 'undefined') return `http://localhost:3001/memories/${memoryId}.png`
+
+    const hostname = window.location.hostname
+    const port = window.location.port
+
+    // Nếu không phải localhost hoặc có port khác 3000/3001, thì là production
+    const isProduction = (hostname !== 'localhost' && hostname !== '127.0.0.1') ||
+                        (port && port !== '3000' && port !== '3001')
+    const baseUrl = isProduction ? '' : 'http://localhost:3001'
+
+    const imageUrl = `${baseUrl}/memories/${memoryId}.png`
+    console.log(`URL ảnh kỷ niệm cho ID ${memoryId}:`, imageUrl)
+    return imageUrl
+  }
 }

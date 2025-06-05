@@ -4,10 +4,11 @@ import { DataManager } from '../utils/dataManager'
 
 const AdminPage = () => {
   const [pendingSignatures, setPendingSignatures] = useState([])
+  const [pendingMemories, setPendingMemories] = useState([])
   const [approvedSignatures, setApprovedSignatures] = useState([])
   const [loading, setLoading] = useState(true)
   const [message, setMessage] = useState('')
-  const [activeTab, setActiveTab] = useState('pending')
+  const [activeTab, setActiveTab] = useState('pending-signatures')
   const [editingSignature, setEditingSignature] = useState(null)
   const [editForm, setEditForm] = useState({ name: '', type: 'student' })
 
@@ -22,6 +23,7 @@ const AdminPage = () => {
       const data = await DataManager.loadData()
       console.log('Admin: Dữ liệu đã tải:', data)
       setPendingSignatures(data.pendingSignatures || [])
+      setPendingMemories(data.pendingMemories || [])
       setApprovedSignatures(data.signatures || [])
     } catch (error) {
       console.error('Lỗi khi tải dữ liệu:', error)
@@ -104,6 +106,36 @@ const AdminPage = () => {
   const handleCancelEdit = () => {
     setEditingSignature(null)
     setEditForm({ name: '', type: 'student' })
+  }
+
+  const handleApproveMemory = async (memoryId) => {
+    try {
+      const success = await DataManager.approveMemory(memoryId)
+      if (success) {
+        setMessage('✅ Đã duyệt ảnh kỷ niệm thành công!')
+        loadData()
+      } else {
+        setMessage('❌ Không thể duyệt ảnh kỷ niệm')
+      }
+    } catch (error) {
+      console.error('Lỗi khi duyệt ảnh kỷ niệm:', error)
+      setMessage('❌ Có lỗi xảy ra khi duyệt ảnh kỷ niệm')
+    }
+  }
+
+  const handleRejectMemory = async (memoryId) => {
+    try {
+      const success = await DataManager.rejectMemory(memoryId)
+      if (success) {
+        setMessage('✅ Đã từ chối ảnh kỷ niệm!')
+        loadData()
+      } else {
+        setMessage('❌ Không thể từ chối ảnh kỷ niệm')
+      }
+    } catch (error) {
+      console.error('Lỗi khi từ chối ảnh kỷ niệm:', error)
+      setMessage('❌ Có lỗi xảy ra khi từ chối ảnh kỷ niệm')
+    }
   }
 
   const getSignatureImage = (signatureId) => {
@@ -199,20 +231,30 @@ const AdminPage = () => {
         {/* Tabs */}
         <div className="max-w-6xl mx-auto mb-8">
           <div className="flex justify-center">
-            <div className="glass-dark rounded-2xl p-2 inline-flex">
+            <div className="glass-dark rounded-2xl p-2 inline-flex flex-wrap gap-1">
               <button
-                onClick={() => setActiveTab('pending')}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
-                  activeTab === 'pending'
+                onClick={() => setActiveTab('pending-signatures')}
+                className={`px-4 py-3 rounded-xl font-medium transition-all duration-300 text-sm ${
+                  activeTab === 'pending-signatures'
                     ? 'bg-yellow-600 text-white shadow-lg'
                     : 'text-white hover:bg-white/10'
                 }`}
               >
-                ⏳ Chờ duyệt ({pendingSignatures.length})
+                ✍️ Chữ ký ({pendingSignatures.length})
+              </button>
+              <button
+                onClick={() => setActiveTab('pending-memories')}
+                className={`px-4 py-3 rounded-xl font-medium transition-all duration-300 text-sm ${
+                  activeTab === 'pending-memories'
+                    ? 'bg-orange-600 text-white shadow-lg'
+                    : 'text-white hover:bg-white/10'
+                }`}
+              >
+                📸 Kỷ niệm ({pendingMemories.length})
               </button>
               <button
                 onClick={() => setActiveTab('approved')}
-                className={`px-6 py-3 rounded-xl font-medium transition-all duration-300 ${
+                className={`px-4 py-3 rounded-xl font-medium transition-all duration-300 text-sm ${
                   activeTab === 'approved'
                     ? 'bg-green-600 text-white shadow-lg'
                     : 'text-white hover:bg-white/10'
@@ -226,10 +268,10 @@ const AdminPage = () => {
 
         {/* Content */}
         <div className="max-w-6xl mx-auto">
-          {activeTab === 'pending' ? (
+          {activeTab === 'pending-signatures' ? (
             <div className="glass-dark rounded-2xl p-6">
               <h2 className="text-2xl font-bold text-white mb-6 text-center">
-                📋 Chữ ký chờ duyệt ({pendingSignatures.length})
+                ✍️ Chữ ký chờ duyệt ({pendingSignatures.length})
               </h2>
 
             {pendingSignatures.length === 0 ? (
@@ -309,6 +351,80 @@ const AdminPage = () => {
                 ))}
               </div>
             )}
+            </div>
+          ) : activeTab === 'pending-memories' ? (
+            <div className="glass-dark rounded-2xl p-6">
+              <h2 className="text-2xl font-bold text-white mb-6 text-center">
+                📸 Ảnh kỷ niệm chờ duyệt ({pendingMemories.length})
+              </h2>
+
+              {pendingMemories.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-gray-300 text-lg">
+                    📸 Chưa có ảnh kỷ niệm nào chờ duyệt!
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-6">
+                  {pendingMemories.map((memory) => (
+                    <div
+                      key={memory.id}
+                      className="bg-white/10 rounded-xl p-6 border border-white/20"
+                    >
+                      <div className="flex flex-col md:flex-row gap-6 items-center">
+                        {/* Thông tin */}
+                        <div className="flex-1">
+                          <h3 className="text-xl font-bold text-white mb-2">
+                            {memory.name}
+                          </h3>
+                          {memory.description && (
+                            <p className="text-gray-300 mb-3 italic">
+                              "{memory.description}"
+                            </p>
+                          )}
+                          <div className="flex items-center gap-4 text-gray-300">
+                            <span className="px-3 py-1 rounded-full text-sm font-medium bg-pink-500/20 text-pink-300">
+                              📸 Kỷ niệm
+                            </span>
+                            <span className="text-sm">
+                              📅 {new Date(memory.timestamp).toLocaleString('vi-VN')}
+                            </span>
+                          </div>
+                        </div>
+
+                        {/* Ảnh kỷ niệm */}
+                        <div className="flex-shrink-0">
+                          <img
+                            src={DataManager.getMemoryImage(memory.id)}
+                            alt={`Kỷ niệm của ${memory.name}`}
+                            className="w-48 h-48 object-cover rounded-lg border-2 border-gray-300"
+                            onError={(e) => {
+                              console.error('Admin: Lỗi load ảnh kỷ niệm:', e)
+                              e.target.style.display = 'none'
+                            }}
+                          />
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex flex-col gap-2">
+                          <button
+                            onClick={() => handleApproveMemory(memory.id)}
+                            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium"
+                          >
+                            ✅ Duyệt
+                          </button>
+                          <button
+                            onClick={() => handleRejectMemory(memory.id)}
+                            className="px-6 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium"
+                          >
+                            ❌ Từ chối
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ) : (
             <div className="glass-dark rounded-2xl p-6">

@@ -2,6 +2,7 @@ import React from 'react'
 import { Routes, Route } from 'react-router-dom'
 import SignaturePage from './pages/SignaturePage'
 import SignatureFormPage from './pages/SignatureFormPage'
+import MemoryFormPage from './pages/MemoryFormPage'
 import AdminPage from './pages/AdminPage'
 import GalleryPage from './pages/GalleryPage'
 import HistoryPage from './pages/HistoryPage'
@@ -15,6 +16,7 @@ function App() {
       <Routes>
         <Route path="/" element={<SignaturePage />} />
         <Route path="/signature-form" element={<SignatureFormPage />} />
+        <Route path="/memory-form" element={<MemoryFormPage />} />
         <Route path="/admin" element={<AdminPage />} />
         <Route path="/gallery" element={<GalleryPage />} />
         <Route path="/history" element={<HistoryPage />} />
