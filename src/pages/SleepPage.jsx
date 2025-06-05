@@ -1,9 +1,63 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 function SleepPage() {
   const [isWakingUp, setIsWakingUp] = useState(false)
+  const [currentQuote, setCurrentQuote] = useState('')
+  const [quoteVisible, setQuoteVisible] = useState(true)
   const navigate = useNavigate()
+
+  // Danh sách các câu kỷ niệm thanh xuân
+  const youthQuotes = [
+    "Tuổi học trò là những trang sách đẹp nhất trong cuốn nhật ký cuộc đời.",
+    "Những giấc mơ tuổi 17 luôn trong trẻo và đầy hy vọng.",
+    "Thời gian cấp 3 là khi chúng ta tin rằng mình có thể chinh phục cả thế giới.",
+    "Những buổi chiều tan học, áo trắng bay trong gió, là ký ức đẹp nhất.",
+    "Tuổi trẻ là khi ta dám mơ những giấc mơ lớn nhất.",
+    "Lớp 12A - nơi những tình bạn đẹp nhất được viết nên.",
+    "Những giờ học cuối cùng, những kỷ niệm không bao giờ phai mờ.",
+    "Tuổi học sinh là khi ta tin vào phép màu của những ước mơ.",
+    "Thanh xuân là những ngày ta cười nhiều hơn khóc.",
+    "Thời gian cấp 3 ngắn ngủi nhưng để lại dấu ấn cả đời.",
+    "Những buổi sáng đến trường với nụ cười tươi nhất.",
+    "Tuổi 17 - khi mọi thứ đều có thể và không gì là không thể.",
+    "Lớp học là nơi ta học cách yêu thương và chia sẻ.",
+    "Những giấc ngủ trưa ngọt ngào nhất của tuổi học trò.",
+    "Thanh xuân là khi ta dám tin vào tình bạn vĩnh cửu.",
+    "Thời gian cấp 3 - khi ta viết những câu thơ đầu đời.",
+    "Tuổi học sinh là khi ta tin rằng tình yêu sẽ mãi mãi.",
+    "Những buổi chiều học bài cùng bạn bè thân thiết.",
+    "Lớp 12A - nơi những ký ức đẹp nhất được lưu giữ.",
+    "Tuổi trẻ là khi ta dám ước mơ về một tương lai rực rỡ.",
+    "Ba năm cấp 3 như một cuốn phim đẹp, mỗi khung hình đều đáng nhớ.",
+    "Những tiếng cười trong giờ ra chơi vang mãi trong tim.",
+    "Tuổi học trò - khi ta tin rằng mình sẽ thay đổi thế giới.",
+    "Những buổi tối làm bài tập cùng nhau qua điện thoại.",
+    "Lớp 12A - nơi những câu chuyện đẹp nhất bắt đầu."
+  ]
+
+  // Chọn câu ngẫu nhiên khi component mount và mỗi 5 giây
+  useEffect(() => {
+    const getRandomQuote = () => {
+      const randomIndex = Math.floor(Math.random() * youthQuotes.length)
+      return youthQuotes[randomIndex]
+    }
+
+    // Chọn câu đầu tiên
+    setCurrentQuote(getRandomQuote())
+
+    // Thay đổi câu mỗi 5 giây với hiệu ứng fade
+    const interval = setInterval(() => {
+      setQuoteVisible(false) // Fade out
+
+      setTimeout(() => {
+        setCurrentQuote(getRandomQuote()) // Đổi câu
+        setQuoteVisible(true) // Fade in
+      }, 500) // Đợi 0.5s để fade out hoàn thành
+    }, 5000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handleWakeUp = () => {
     setIsWakingUp(true)
@@ -88,11 +142,18 @@ function SleepPage() {
                 Kỷ niệm thanh xuân
                 <div className="w-2 h-2 bg-cyan-500 rounded-full neon-pulse"></div>
               </h3>
-              <p className="text-cyan-200 text-sm leading-relaxed">
-                Những năm tháng cấp 3 như giấc ngủ trưa ngọt ngào - đầy ắp tiếng cười,
-                tình bạn chân thành và những ước mơ tuổi trẻ. Thời gian tuy ngắn nhưng để lại
-                dấu ấn sâu đậm trong trái tim mỗi người! 🌸✨
-              </p>
+              <div className="relative min-h-[80px] flex items-center justify-center">
+                <p className={`text-cyan-200 text-base leading-relaxed text-center italic transition-all duration-500 ease-in-out transform ${
+                  quoteVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
+                }`}>
+                  "{currentQuote}"
+                </p>
+              </div>
+              <div className="mt-4 text-center">
+                <span className="text-cyan-300/60 text-xs">
+                  💫 Câu này sẽ thay đổi mỗi 5 giây 💫
+                </span>
+              </div>
             </div>
 
           </div>

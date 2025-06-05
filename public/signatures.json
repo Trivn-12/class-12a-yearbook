@@ -1,31 +1,19 @@
 {
-  "signatures": [
+  "signatures": [],
+  "pendingSignatures": [
     {
-      "id": "1749141020975",
-      "name": "trư",
+      "id": "1749142229893",
+      "name": "tesst",
       "type": "student",
-      "imagePath": "signatures/1749141020975.png",
-      "timestamp": "2025-06-05T16:30:20.975Z",
-      "status": "approved",
+      "imagePath": "signatures/1749142229893.png",
+      "timestamp": "2025-06-05T16:50:29.895Z",
+      "status": "pending",
       "position": {
-        "x": 78.12130670464398,
-        "y": 216.15297287677254
-      }
-    },
-    {
-      "id": "1749141317897",
-      "name": "wwwwww",
-      "type": "student",
-      "imagePath": "signatures/1749141317897.png",
-      "timestamp": "2025-06-05T16:35:17.905Z",
-      "status": "approved",
-      "position": {
-        "x": 70.64670543500245,
-        "y": 23.48871384647842
+        "x": 246.90431562797704,
+        "y": 15.378650601409639
       }
     }
   ],
-  "pendingSignatures": [],
   "settings": {
     "backgroundTheme": "bg-gradient-1",
     "gridSize": {
