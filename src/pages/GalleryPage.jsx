@@ -117,7 +117,7 @@ const GalleryPage = () => {
     if (!canvasRef.current) return
 
     setIsCapturing(true)
-    setMessage('📷 Đang chụp ảnh canvas...')
+    setMessage('📷 Đang chuẩn bị chụp canvas...')
 
     try {
       // Hiện tất cả tooltips tạm thời để chụp
@@ -127,9 +127,26 @@ const GalleryPage = () => {
         tooltip.style.visibility = 'visible'
       })
 
+      // Đợi tất cả ảnh load xong
+      const images = canvasRef.current.querySelectorAll('img')
+      const imagePromises = Array.from(images).map(img => {
+        return new Promise((resolve) => {
+          if (img.complete) {
+            resolve()
+          } else {
+            img.onload = resolve
+            img.onerror = resolve // Vẫn resolve ngay cả khi lỗi
+          }
+        })
+      })
+
+      await Promise.all(imagePromises)
+      console.log('Tất cả ảnh đã load xong, bắt đầu chụp...')
+      setMessage('📷 Đang chụp canvas với tất cả ảnh...')
+
       // Chụp ảnh canvas với tất cả nội dung
       const canvas = await html2canvas(canvasRef.current, {
-        backgroundColor: 'rgba(255, 255, 255, 0.05)', // Nền trong suốt nhẹ
+        backgroundColor: '#ffffff', // Nền trắng
         scale: 2, // Độ phân giải cao hơn
         useCORS: true,
         allowTaint: true,
@@ -140,7 +157,9 @@ const GalleryPage = () => {
         scrollX: 0,
         scrollY: 0,
         windowWidth: canvasRef.current.scrollWidth,
-        windowHeight: canvasRef.current.scrollHeight
+        windowHeight: canvasRef.current.scrollHeight,
+        imageTimeout: 15000, // Timeout cho việc load ảnh
+        removeContainer: false // Giữ nguyên container
       })
 
       // Tạo link download
@@ -153,7 +172,7 @@ const GalleryPage = () => {
       link.click()
       document.body.removeChild(link)
 
-      setMessage('✅ Đã tải ảnh canvas thành công!')
+      setMessage('✅ Đã tải ảnh canvas với tất cả nội dung thành công!')
 
       // Khôi phục trạng thái tooltips
       tooltips.forEach(tooltip => {
@@ -288,7 +307,7 @@ const GalleryPage = () => {
             ) : (
               <div
                 ref={canvasRef}
-                className="zoom-container relative w-full h-[400px] md:h-[600px] lg:h-[700px] bg-white/5 rounded-xl border-2 border-white/20 overflow-auto"
+                className="zoom-container relative w-full h-[400px] md:h-[600px] lg:h-[700px] bg-white rounded-xl border-2 border-gray-300 overflow-auto"
                 onMouseMove={handleMouseMove}
                 onMouseUp={handleMouseUp}
                 onMouseLeave={handleMouseUp}
@@ -343,6 +362,7 @@ const GalleryPage = () => {
                               src={imageData}
                               alt={isMemory ? `Kỷ niệm của ${signature.name}` : `Chữ ký của ${signature.name}`}
                               className={`max-w-full max-h-full ${isMemory ? 'object-cover' : 'object-contain'} bg-white rounded`}
+                              crossOrigin="anonymous"
                               draggable={false}
                               onError={(e) => {
                                 console.error('Lỗi load ảnh:', e)
