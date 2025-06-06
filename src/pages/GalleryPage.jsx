@@ -164,21 +164,26 @@ const GalleryPage = () => {
 
       await Promise.all(imagePromises)
       console.log('Tất cả ảnh đã load xong, bắt đầu chụp...')
-      setMessage('📷 Đang chụp canvas với tất cả ảnh...')
+      setMessage(`📷 Đang chụp canvas độ phân giải cao (${highResScale}x)...`)
 
       // Đợi thêm 500ms để đảm bảo render hoàn tất
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Chụp ảnh canvas với cấu hình đơn giản hơn
+      // Chụp ảnh canvas với độ phân giải cao
       console.log('Bắt đầu html2canvas...')
+      const pixelRatio = window.devicePixelRatio || 1
+      const highResScale = Math.max(3, pixelRatio * 2) // Tối thiểu 3x, hoặc 2x devicePixelRatio
+
       const canvas = await html2canvas(canvasRef.current, {
         backgroundColor: '#ffffff',
-        scale: 1, // Giảm scale để test
+        scale: highResScale, // Độ phân giải cao
         useCORS: true,
         allowTaint: false,
         logging: true, // Bật logging để debug
         width: canvasRef.current.offsetWidth,
-        height: canvasRef.current.offsetHeight
+        height: canvasRef.current.offsetHeight,
+        foreignObjectRendering: true,
+        imageTimeout: 30000 // Tăng timeout
       })
 
       console.log('html2canvas hoàn thành, canvas size:', canvas.width, 'x', canvas.height)
@@ -200,7 +205,7 @@ const GalleryPage = () => {
       link.click()
       document.body.removeChild(link)
 
-      setMessage('✅ Đã tải ảnh canvas thành công!')
+      setMessage(`✅ Đã tải ảnh canvas độ phân giải cao (${canvas.width}x${canvas.height}) thành công!`)
 
       // Khôi phục trạng thái tooltips
       tooltips.forEach(tooltip => {
@@ -219,8 +224,9 @@ const GalleryPage = () => {
 
         const fallbackCanvas = await html2canvas(canvasRef.current, {
           backgroundColor: '#ffffff',
-          scale: 1,
-          logging: true
+          scale: 2, // Fallback vẫn dùng scale cao
+          logging: true,
+          useCORS: true
         })
 
         if (fallbackCanvas.width > 0 && fallbackCanvas.height > 0) {
