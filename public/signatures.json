@@ -37,6 +37,19 @@
         "x": 765.1936623724225,
         "y": 398.4470329992488
       }
+    },
+    {
+      "id": "1749213268641",
+      "name": "Trí",
+      "type": "student",
+      "contentType": "signature",
+      "imagePath": "signatures/1749213268641.png",
+      "timestamp": "2025-06-06T12:34:28.648Z",
+      "status": "approved",
+      "position": {
+        "x": 671.6125036592613,
+        "y": 181.11005531099755
+      }
     }
   ],
   "pendingSignatures": [],

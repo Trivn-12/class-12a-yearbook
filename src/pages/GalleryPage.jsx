@@ -12,6 +12,7 @@ const GalleryPage = () => {
   const [zoomLevel, setZoomLevel] = useState(1)
   const [touchedSignature, setTouchedSignature] = useState(null)
   const [isCapturing, setIsCapturing] = useState(false)
+  const [selectedResolution, setSelectedResolution] = useState('ultra') // ultra, high, medium
   const canvasRef = useRef(null)
 
   // Kiểm tra xem có phải admin không (từ URL parameter)
@@ -164,26 +165,52 @@ const GalleryPage = () => {
 
       await Promise.all(imagePromises)
       console.log('Tất cả ảnh đã load xong, bắt đầu chụp...')
-      setMessage(`📷 Đang chụp canvas độ phân giải cao (${highResScale}x)...`)
+      setMessage(`📷 Đang chụp canvas độ phân giải ${selectedResolution} (${scale}x)...`)
 
       // Đợi thêm 500ms để đảm bảo render hoàn tất
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Chụp ảnh canvas với độ phân giải cao
+      // Chụp ảnh canvas với độ phân giải được chọn
       console.log('Bắt đầu html2canvas...')
       const pixelRatio = window.devicePixelRatio || 1
-      const highResScale = Math.max(3, pixelRatio * 2) // Tối thiểu 3x, hoặc 2x devicePixelRatio
+
+      // Tính scale dựa trên lựa chọn
+      let scale
+      switch(selectedResolution) {
+        case 'ultra':
+          scale = Math.max(8, pixelRatio * 4) // Cực cao: 8x+
+          break
+        case 'high':
+          scale = Math.max(5, pixelRatio * 3) // Cao: 5x+
+          break
+        case 'medium':
+          scale = Math.max(3, pixelRatio * 2) // Trung bình: 3x+
+          break
+        default:
+          scale = Math.max(5, pixelRatio * 3)
+      }
+
+      console.log(`Sử dụng scale: ${scale}x (${selectedResolution} resolution, devicePixelRatio: ${pixelRatio})`)
 
       const canvas = await html2canvas(canvasRef.current, {
         backgroundColor: '#ffffff',
-        scale: highResScale, // Độ phân giải cao
+        scale: scale,
         useCORS: true,
         allowTaint: false,
-        logging: true, // Bật logging để debug
+        logging: true,
         width: canvasRef.current.offsetWidth,
         height: canvasRef.current.offsetHeight,
         foreignObjectRendering: true,
-        imageTimeout: 30000 // Tăng timeout
+        imageTimeout: selectedResolution === 'ultra' ? 120000 : 60000, // Ultra: 2 phút, khác: 1 phút
+        onclone: (clonedDoc) => {
+          // Đảm bảo fonts được load trong cloned document
+          const style = clonedDoc.createElement('style')
+          style.textContent = `
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+            * { font-family: 'Inter', sans-serif !important; }
+          `
+          clonedDoc.head.appendChild(style)
+        }
       })
 
       console.log('html2canvas hoàn thành, canvas size:', canvas.width, 'x', canvas.height)
@@ -197,7 +224,8 @@ const GalleryPage = () => {
       console.log('DataURL length:', dataURL.length)
 
       const link = document.createElement('a')
-      link.download = `AK25-Canvas-${new Date().toISOString().split('T')[0]}.png`
+      const resolutionLabel = selectedResolution.toUpperCase()
+      link.download = `AK25-Canvas-${resolutionLabel}-${scale}x-${new Date().toISOString().split('T')[0]}.png`
       link.href = dataURL
 
       // Trigger download
@@ -224,9 +252,10 @@ const GalleryPage = () => {
 
         const fallbackCanvas = await html2canvas(canvasRef.current, {
           backgroundColor: '#ffffff',
-          scale: 2, // Fallback vẫn dùng scale cao
+          scale: 4, // Fallback dùng scale 4x
           logging: true,
-          useCORS: true
+          useCORS: true,
+          imageTimeout: 30000
         })
 
         if (fallbackCanvas.width > 0 && fallbackCanvas.height > 0) {
@@ -308,13 +337,25 @@ const GalleryPage = () => {
             >
               <span>History</span>
             </Link>
-            <button
-              onClick={handleCaptureImage}
-              disabled={isCapturing || signatures.length === 0}
-              className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
-            >
-              <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
-            </button>
+            <div className="flex items-center gap-2">
+              <select
+                value={selectedResolution}
+                onChange={(e) => setSelectedResolution(e.target.value)}
+                disabled={isCapturing}
+                className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20 text-sm disabled:opacity-50"
+              >
+                <option value="medium" className="text-black">3x+ (Medium)</option>
+                <option value="high" className="text-black">5x+ (High)</option>
+                <option value="ultra" className="text-black">8x+ (Ultra)</option>
+              </select>
+              <button
+                onClick={handleCaptureImage}
+                disabled={isCapturing || signatures.length === 0}
+                className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
+              >
+                <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
+              </button>
+            </div>
           </div>
         </nav>
 
