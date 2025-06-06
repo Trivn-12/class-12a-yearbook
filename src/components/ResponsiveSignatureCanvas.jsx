@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, forwardRef, useImperativeHandle } from 'react'
 
-const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange }, ref) => {
+const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2 }, ref) => {
   const canvasRef = useRef(null)
   const [isDrawing, setIsDrawing] = useState(false)
   const [isEmpty, setIsEmpty] = useState(true)
@@ -49,14 +49,14 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange }, ref) => {
 
     // Thiết lập canvas với độ phân giải cao
     ctx.strokeStyle = '#000000'
-    ctx.lineWidth = (window.innerWidth < 640 ? 3 : 2) / scale // Adjust line width for scale
+    ctx.lineWidth = lineWidth / scale // Use prop lineWidth, adjust for scale
     ctx.lineCap = 'round'
     ctx.lineJoin = 'round'
 
     // Làm sạch canvas
     ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, displaySize.width, displaySize.height)
-  }, [canvasSize, displaySize])
+  }, [canvasSize, displaySize, lineWidth])
 
   const getEventPos = (e) => {
     const canvas = canvasRef.current

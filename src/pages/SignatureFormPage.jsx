@@ -9,6 +9,7 @@ const SignatureFormPage = () => {
   const [currentCanvas, setCurrentCanvas] = useState(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitMessage, setSubmitMessage] = useState('')
+  const [lineWidth, setLineWidth] = useState(2)
   const canvasRef = useRef(null)
   const navigate = useNavigate()
 
@@ -279,6 +280,43 @@ const SignatureFormPage = () => {
                   </p>
                 </div>
 
+                {/* Line Width Control */}
+                <div className="mb-6">
+                  <label className="block text-white text-sm font-medium mb-3 text-center">
+                    Pen Thickness: {lineWidth}px
+                  </label>
+                  <div className="flex items-center gap-4 justify-center">
+                    <span className="text-white/70 text-sm">Thin</span>
+                    <input
+                      type="range"
+                      min="1"
+                      max="8"
+                      step="0.5"
+                      value={lineWidth}
+                      onChange={(e) => setLineWidth(parseFloat(e.target.value))}
+                      className="flex-1 max-w-48 h-2 bg-white/20 rounded-lg appearance-none cursor-pointer slider"
+                      style={{
+                        background: `linear-gradient(to right, #8b5cf6 0%, #8b5cf6 ${((lineWidth - 1) / 7) * 100}%, rgba(255,255,255,0.2) ${((lineWidth - 1) / 7) * 100}%, rgba(255,255,255,0.2) 100%)`
+                      }}
+                    />
+                    <span className="text-white/70 text-sm">Thick</span>
+                  </div>
+
+                  {/* Preview line */}
+                  <div className="flex justify-center mt-3">
+                    <div className="bg-white/10 rounded-lg p-3">
+                      <div
+                        className="bg-black rounded-full"
+                        style={{
+                          width: '60px',
+                          height: `${lineWidth}px`,
+                          minHeight: '1px'
+                        }}
+                      ></div>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex justify-center">
                   <div className="relative w-full max-w-lg">
                     <div className="absolute -inset-3 bg-gradient-to-r from-purple-500/30 to-pink-500/30 rounded-3xl blur-xl neon-pulse"></div>
@@ -287,6 +325,7 @@ const SignatureFormPage = () => {
                       <ResponsiveSignatureCanvas
                         ref={canvasRef}
                         onSignatureChange={handleSignatureChange}
+                        lineWidth={lineWidth}
                       />
                     </div>
                   </div>
