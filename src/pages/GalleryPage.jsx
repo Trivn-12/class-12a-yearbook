@@ -328,7 +328,6 @@ const GalleryPage = () => {
       })
 
       // Khôi phục border và background của signatures
-      const signatureItems = canvasRef.current.querySelectorAll('.signature-item')
       signatureItems.forEach(item => {
         item.style.border = ''
         item.style.backgroundColor = ''
