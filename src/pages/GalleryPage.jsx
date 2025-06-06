@@ -114,14 +114,27 @@ const GalleryPage = () => {
 
   // Function để chụp ảnh gallery - in tất cả mọi thứ
   const handleCaptureImage = async () => {
-    if (!canvasRef.current) return
+    if (!canvasRef.current) {
+      console.error('Canvas ref không tồn tại')
+      setMessage('❌ Không tìm thấy canvas')
+      return
+    }
 
     setIsCapturing(true)
     setMessage('📷 Đang chuẩn bị chụp canvas...')
 
     try {
+      console.log('Canvas element:', canvasRef.current)
+      console.log('Canvas dimensions:', {
+        width: canvasRef.current.offsetWidth,
+        height: canvasRef.current.offsetHeight,
+        scrollWidth: canvasRef.current.scrollWidth,
+        scrollHeight: canvasRef.current.scrollHeight
+      })
+
       // Hiện tất cả tooltips tạm thời để chụp
       const tooltips = document.querySelectorAll('.signature-tooltip')
+      console.log('Found tooltips:', tooltips.length)
       tooltips.forEach(tooltip => {
         tooltip.style.opacity = '1'
         tooltip.style.visibility = 'visible'
@@ -129,13 +142,22 @@ const GalleryPage = () => {
 
       // Đợi tất cả ảnh load xong
       const images = canvasRef.current.querySelectorAll('img')
-      const imagePromises = Array.from(images).map(img => {
+      console.log('Found images:', images.length)
+
+      const imagePromises = Array.from(images).map((img, index) => {
         return new Promise((resolve) => {
+          console.log(`Image ${index}:`, img.src, 'Complete:', img.complete)
           if (img.complete) {
             resolve()
           } else {
-            img.onload = resolve
-            img.onerror = resolve // Vẫn resolve ngay cả khi lỗi
+            img.onload = () => {
+              console.log(`Image ${index} loaded`)
+              resolve()
+            }
+            img.onerror = () => {
+              console.log(`Image ${index} error`)
+              resolve()
+            }
           }
         })
       })
@@ -144,35 +166,41 @@ const GalleryPage = () => {
       console.log('Tất cả ảnh đã load xong, bắt đầu chụp...')
       setMessage('📷 Đang chụp canvas với tất cả ảnh...')
 
-      // Chụp ảnh canvas với tất cả nội dung
+      // Đợi thêm 500ms để đảm bảo render hoàn tất
+      await new Promise(resolve => setTimeout(resolve, 500))
+
+      // Chụp ảnh canvas với cấu hình đơn giản hơn
+      console.log('Bắt đầu html2canvas...')
       const canvas = await html2canvas(canvasRef.current, {
-        backgroundColor: '#ffffff', // Nền trắng
-        scale: 2, // Độ phân giải cao hơn
+        backgroundColor: '#ffffff',
+        scale: 1, // Giảm scale để test
         useCORS: true,
-        allowTaint: true,
-        foreignObjectRendering: true,
-        logging: false,
-        width: canvasRef.current.scrollWidth,
-        height: canvasRef.current.scrollHeight,
-        scrollX: 0,
-        scrollY: 0,
-        windowWidth: canvasRef.current.scrollWidth,
-        windowHeight: canvasRef.current.scrollHeight,
-        imageTimeout: 15000, // Timeout cho việc load ảnh
-        removeContainer: false // Giữ nguyên container
+        allowTaint: false,
+        logging: true, // Bật logging để debug
+        width: canvasRef.current.offsetWidth,
+        height: canvasRef.current.offsetHeight
       })
 
+      console.log('html2canvas hoàn thành, canvas size:', canvas.width, 'x', canvas.height)
+
+      if (canvas.width === 0 || canvas.height === 0) {
+        throw new Error('Canvas có kích thước 0')
+      }
+
       // Tạo link download
+      const dataURL = canvas.toDataURL('image/png', 1.0)
+      console.log('DataURL length:', dataURL.length)
+
       const link = document.createElement('a')
       link.download = `AK25-Canvas-${new Date().toISOString().split('T')[0]}.png`
-      link.href = canvas.toDataURL('image/png', 1.0) // Chất lượng tối đa
+      link.href = dataURL
 
       // Trigger download
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
 
-      setMessage('✅ Đã tải ảnh canvas với tất cả nội dung thành công!')
+      setMessage('✅ Đã tải ảnh canvas thành công!')
 
       // Khôi phục trạng thái tooltips
       tooltips.forEach(tooltip => {
@@ -181,12 +209,40 @@ const GalleryPage = () => {
       })
 
     } catch (error) {
-      console.error('Lỗi khi chụp ảnh:', error)
-      setMessage('❌ Không thể chụp ảnh canvas')
+      console.error('Lỗi chi tiết khi chụp ảnh:', error)
+      setMessage(`❌ Lỗi: ${error.message}`)
+
+      // Fallback: Thử chụp với cấu hình tối thiểu
+      try {
+        console.log('Thử fallback method...')
+        setMessage('🔄 Thử phương pháp khác...')
+
+        const fallbackCanvas = await html2canvas(canvasRef.current, {
+          backgroundColor: '#ffffff',
+          scale: 1,
+          logging: true
+        })
+
+        if (fallbackCanvas.width > 0 && fallbackCanvas.height > 0) {
+          const dataURL = fallbackCanvas.toDataURL('image/png')
+          const link = document.createElement('a')
+          link.download = `AK25-Canvas-Fallback-${new Date().toISOString().split('T')[0]}.png`
+          link.href = dataURL
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          setMessage('✅ Đã tải ảnh bằng phương pháp dự phòng!')
+        } else {
+          setMessage('❌ Không thể chụp ảnh canvas')
+        }
+      } catch (fallbackError) {
+        console.error('Fallback cũng thất bại:', fallbackError)
+        setMessage('❌ Không thể chụp ảnh canvas')
+      }
     } finally {
       setIsCapturing(false)
-      // Tự động ẩn message sau 3 giây
-      setTimeout(() => setMessage(''), 3000)
+      // Tự động ẩn message sau 5 giây
+      setTimeout(() => setMessage(''), 5000)
     }
   }
 
@@ -252,6 +308,19 @@ const GalleryPage = () => {
               className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
             >
               <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
+            </button>
+            <button
+              onClick={() => {
+                console.log('Test button clicked')
+                console.log('Canvas ref:', canvasRef.current)
+                console.log('Signatures:', signatures.length)
+                if (canvasRef.current) {
+                  console.log('Canvas element found:', canvasRef.current.offsetWidth, 'x', canvasRef.current.offsetHeight)
+                }
+              }}
+              className="group flex items-center gap-3 px-4 py-2 rounded-xl font-medium text-white hover:bg-blue-500/20 transition-all duration-300 text-sm border border-blue-500/30"
+            >
+              <span>🔍 Test</span>
             </button>
           </div>
         </nav>
