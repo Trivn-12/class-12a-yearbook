@@ -1,59 +1,18 @@
 {
   "signatures": [
     {
-      "id": "1749142229893",
-      "name": "tesst",
+      "id": "1749216508227",
+      "name": "ytris",
       "type": "student",
-      "imagePath": "signatures/1749142229893.png",
-      "timestamp": "2025-06-05T16:50:29.895Z",
+      "contentType": "signature",
+      "imagePath": "signatures/1749216508227.png",
+      "timestamp": "2025-06-06T13:28:28.229Z",
       "status": "approved",
       "position": {
-        "x": 182.90431562797704,
-        "y": 56.35904305746433
-      },
-      "scale": 1.5468323651237292
-    },
-    {
-      "id": "1749144272947",
-      "name": "www",
-      "description": "",
-      "contentType": "memory",
-      "imagePath": "memories/1749144272947.png",
-      "timestamp": "2025-06-05T17:24:32.950Z",
-      "status": "approved",
-      "position": {
-        "x": 313.68404935190256,
-        "y": 99.42214058841381
+        "x": 187.02623713973293,
+        "y": 76.6537062664907
       },
       "scale": 5
-    },
-    {
-      "id": "1749144079933",
-      "name": "wwwwwwww",
-      "type": "student",
-      "contentType": "signature",
-      "imagePath": "signatures/1749144079933.png",
-      "timestamp": "2025-06-05T17:21:19.934Z",
-      "status": "approved",
-      "position": {
-        "x": 108.19366237242252,
-        "y": 117.44703299924879
-      },
-      "scale": 2.6222883673317403
-    },
-    {
-      "id": "1749213268641",
-      "name": "Trí",
-      "type": "student",
-      "contentType": "signature",
-      "imagePath": "signatures/1749213268641.png",
-      "timestamp": "2025-06-06T12:34:28.648Z",
-      "status": "approved",
-      "position": {
-        "x": 7.612503659261279,
-        "y": -81.16445030423682
-      },
-      "scale": 1.1211758330735988
     }
   ],
   "pendingSignatures": [],

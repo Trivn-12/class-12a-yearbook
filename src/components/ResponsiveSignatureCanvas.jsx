@@ -7,27 +7,34 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
   const [lastPoint, setLastPoint] = useState(null)
   const [canvasSize, setCanvasSize] = useState({ width: 800, height: 600 })
   const [displaySize, setDisplaySize] = useState({ width: 400, height: 300 })
+  const callbackTimeoutRef = useRef(null)
 
   useEffect(() => {
-    // Responsive canvas size - High resolution with devicePixelRatio
+    // Responsive canvas size - Optimized for mobile performance
     const updateCanvasSize = () => {
       const screenWidth = window.innerWidth
+      const isMobile = screenWidth < 640
       const pixelRatio = window.devicePixelRatio || 1
 
-      let displayWidth, displayHeight
-      if (screenWidth < 640) { // Mobile
-        displayWidth = 320
-        displayHeight = 200
-      } else if (screenWidth < 768) { // Small tablet
+      let displayWidth, displayHeight, scale
+
+      if (isMobile) {
+        // Mobile: Smaller size for better performance
+        displayWidth = Math.min(300, screenWidth - 40)
+        displayHeight = 180
+        scale = Math.min(2, pixelRatio) // Limit scale on mobile
+      } else if (screenWidth < 768) {
+        // Tablet
         displayWidth = 400
-        displayHeight = 250
-      } else { // Desktop
+        displayHeight = 240
+        scale = Math.max(2, pixelRatio)
+      } else {
+        // Desktop
         displayWidth = 500
         displayHeight = 300
+        scale = Math.max(2, pixelRatio)
       }
 
-      // High resolution canvas - 2x minimum
-      const scale = Math.max(2, pixelRatio)
       setCanvasSize({
         width: displayWidth * scale,
         height: displayHeight * scale
@@ -40,7 +47,12 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
 
     updateCanvasSize()
     window.addEventListener('resize', updateCanvasSize)
-    return () => window.removeEventListener('resize', updateCanvasSize)
+    return () => {
+      window.removeEventListener('resize', updateCanvasSize)
+      if (callbackTimeoutRef.current) {
+        clearTimeout(callbackTimeoutRef.current)
+      }
+    }
   }, [])
 
   useEffect(() => {
@@ -75,21 +87,27 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
     const rect = canvas.getBoundingClientRect()
 
     let clientX, clientY
-    if (e.touches) {
+    if (e.touches && e.touches.length > 0) {
+      // Mobile touch
       clientX = e.touches[0].clientX
       clientY = e.touches[0].clientY
+    } else if (e.changedTouches && e.changedTouches.length > 0) {
+      // Touch end event
+      clientX = e.changedTouches[0].clientX
+      clientY = e.changedTouches[0].clientY
     } else {
+      // Mouse
       clientX = e.clientX
       clientY = e.clientY
     }
 
-    // Calculate precise coordinates
+    // Calculate precise coordinates with proper scaling
     const scaleX = displaySize.width / rect.width
     const scaleY = displaySize.height / rect.height
 
     return {
-      x: (clientX - rect.left) * scaleX,
-      y: (clientY - rect.top) * scaleY
+      x: Math.round((clientX - rect.left) * scaleX),
+      y: Math.round((clientY - rect.top) * scaleY)
     }
   }
 
@@ -112,17 +130,33 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
     ctx.fill()
   }
 
+  // Debounced callback for performance
+  const debouncedCallback = (canvas) => {
+    if (callbackTimeoutRef.current) {
+      clearTimeout(callbackTimeoutRef.current)
+    }
+
+    callbackTimeoutRef.current = setTimeout(() => {
+      if (onSignatureChange) {
+        onSignatureChange(canvas)
+      }
+    }, 16) // ~60fps
+  }
+
   const startDrawing = (e) => {
     e.preventDefault()
+    e.stopPropagation()
+
     setIsDrawing(true)
     setIsEmpty(false)
 
     const pos = getEventPos(e)
     setLastPoint(pos)
 
-    // Draw a dot for single clicks
+    // Draw a dot for single clicks/taps
     drawDot(pos)
 
+    // Immediate callback for responsiveness
     if (onSignatureChange) {
       onSignatureChange(canvasRef.current)
     }
@@ -131,22 +165,39 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
   const draw = (e) => {
     if (!isDrawing || !lastPoint) return
     e.preventDefault()
+    e.stopPropagation()
 
     const pos = getEventPos(e)
+
+    // Skip if position hasn't changed much (reduce redundant draws)
+    const distance = Math.sqrt(
+      Math.pow(pos.x - lastPoint.x, 2) + Math.pow(pos.y - lastPoint.y, 2)
+    )
+
+    if (distance < 1) return // Skip tiny movements
 
     // Draw smooth line from last point to current point
     drawLine(lastPoint, pos)
     setLastPoint(pos)
 
-    if (onSignatureChange) {
-      onSignatureChange(canvasRef.current)
-    }
+    // Throttled callback for performance
+    debouncedCallback(canvasRef.current)
   }
 
   const stopDrawing = (e) => {
-    if (e) e.preventDefault()
+    if (!isDrawing) return
+    if (e) {
+      e.preventDefault()
+      e.stopPropagation()
+    }
+
     setIsDrawing(false)
     setLastPoint(null)
+
+    // Final callback
+    if (onSignatureChange) {
+      onSignatureChange(canvasRef.current)
+    }
   }
 
   const clearCanvas = () => {
@@ -197,7 +248,10 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
             height: `${displaySize.height}px`,
             maxWidth: '100%',
             cursor: 'crosshair',
-            background: '#ffffff'
+            background: '#ffffff',
+            WebkitTouchCallout: 'none',
+            WebkitUserSelect: 'none',
+            userSelect: 'none'
           }}
           onMouseDown={startDrawing}
           onMouseMove={draw}
@@ -206,7 +260,10 @@ const ResponsiveSignatureCanvas = forwardRef(({ onSignatureChange, lineWidth = 2
           onTouchStart={startDrawing}
           onTouchMove={draw}
           onTouchEnd={stopDrawing}
+          onTouchCancel={stopDrawing}
           onContextMenu={(e) => e.preventDefault()}
+          onSelectStart={(e) => e.preventDefault()}
+          onDragStart={(e) => e.preventDefault()}
         />
 
         {/* Placeholder text when empty */}
