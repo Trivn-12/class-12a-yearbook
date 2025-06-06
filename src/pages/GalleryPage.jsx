@@ -309,19 +309,6 @@ const GalleryPage = () => {
             >
               <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
             </button>
-            <button
-              onClick={() => {
-                console.log('Test button clicked')
-                console.log('Canvas ref:', canvasRef.current)
-                console.log('Signatures:', signatures.length)
-                if (canvasRef.current) {
-                  console.log('Canvas element found:', canvasRef.current.offsetWidth, 'x', canvasRef.current.offsetHeight)
-                }
-              }}
-              className="group flex items-center gap-3 px-4 py-2 rounded-xl font-medium text-white hover:bg-blue-500/20 transition-all duration-300 text-sm border border-blue-500/30"
-            >
-              <span>🔍 Test</span>
-            </button>
           </div>
         </nav>
 
