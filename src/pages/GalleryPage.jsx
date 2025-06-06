@@ -226,12 +226,12 @@ const GalleryPage = () => {
         scrollHeight: canvasRef.current.scrollHeight
       })
 
-      // Hiện tất cả tooltips tạm thời để chụp
+      // Ẩn tất cả tooltips khi chụp
       const tooltips = document.querySelectorAll('.signature-tooltip')
       console.log('Found tooltips:', tooltips.length)
       tooltips.forEach(tooltip => {
-        tooltip.style.opacity = '1'
-        tooltip.style.visibility = 'visible'
+        tooltip.style.opacity = '0'
+        tooltip.style.visibility = 'hidden'
       })
 
       // Ẩn border và background của signatures khi chụp
@@ -289,12 +289,13 @@ const GalleryPage = () => {
         foreignObjectRendering: true,
         imageTimeout: 60000, // 1 phút
         onclone: (clonedDoc) => {
-          // Đảm bảo fonts được load và ẩn border trong cloned document
+          // Đảm bảo fonts được load và ẩn border + tooltips trong cloned document
           const style = clonedDoc.createElement('style')
           style.textContent = `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
             * { font-family: 'Inter', sans-serif !important; }
             .signature-item { border: none !important; background-color: transparent !important; }
+            .signature-tooltip { opacity: 0 !important; visibility: hidden !important; }
           `
           clonedDoc.head.appendChild(style)
         }
