@@ -12,7 +12,8 @@ const GalleryPage = () => {
   const [zoomLevel, setZoomLevel] = useState(1)
   const [touchedSignature, setTouchedSignature] = useState(null)
   const [isCapturing, setIsCapturing] = useState(false)
-  const [selectedResolution, setSelectedResolution] = useState('ultra') // ultra, high, medium
+  const [resizingSignature, setResizingSignature] = useState(null)
+  const [resizeStartPos, setResizeStartPos] = useState({ x: 0, y: 0 })
   const canvasRef = useRef(null)
 
   // Kiểm tra xem có phải admin không (từ URL parameter)
@@ -113,6 +114,60 @@ const GalleryPage = () => {
     }, 2000)
   }
 
+  // Resize handlers
+  const handleResizeStart = (e, signature) => {
+    if (!isAdmin) return
+    e.stopPropagation() // Ngăn drag
+
+    const rect = canvasRef.current.getBoundingClientRect()
+    setResizingSignature(signature)
+    setResizeStartPos({
+      x: (e.clientX - rect.left) / zoomLevel,
+      y: (e.clientY - rect.top) / zoomLevel
+    })
+  }
+
+  const handleResizeMove = (e) => {
+    if (!isAdmin || !resizingSignature) return
+
+    const rect = canvasRef.current.getBoundingClientRect()
+    const currentX = (e.clientX - rect.left) / zoomLevel
+    const currentY = (e.clientY - rect.top) / zoomLevel
+
+    const deltaX = currentX - resizeStartPos.x
+    const deltaY = currentY - resizeStartPos.y
+    const delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+
+    // Tính scale mới (tối thiểu 0.5x, tối đa 3x)
+    const baseScale = resizingSignature.scale || 1
+    const newScale = Math.max(0.5, Math.min(3, baseScale + delta * 0.01))
+
+    // Cập nhật scale tạm thời
+    setSignatures(prev => prev.map(sig =>
+      sig.id === resizingSignature.id
+        ? { ...sig, scale: newScale }
+        : sig
+    ))
+  }
+
+  const handleResizeEnd = async () => {
+    if (!isAdmin || !resizingSignature) return
+
+    try {
+      const signature = signatures.find(s => s.id === resizingSignature.id)
+      if (signature) {
+        await DataManager.updateSignatureScale(resizingSignature.id, signature.scale || 1)
+        setMessage('✅ Đã thay đổi kích thước thành công!')
+      }
+    } catch (error) {
+      console.error('Lỗi khi thay đổi kích thước:', error)
+      setMessage('❌ Không thể thay đổi kích thước')
+    }
+
+    setResizingSignature(null)
+    setResizeStartPos({ x: 0, y: 0 })
+  }
+
   // Function để chụp ảnh gallery - in tất cả mọi thứ
   const handleCaptureImage = async () => {
     if (!canvasRef.current) {
@@ -165,32 +220,17 @@ const GalleryPage = () => {
 
       await Promise.all(imagePromises)
       console.log('Tất cả ảnh đã load xong, bắt đầu chụp...')
-      setMessage(`📷 Đang chụp canvas độ phân giải ${selectedResolution} (${scale}x)...`)
+      setMessage(`📷 Đang chụp canvas độ phân giải cao (${scale}x)...`)
 
       // Đợi thêm 500ms để đảm bảo render hoàn tất
       await new Promise(resolve => setTimeout(resolve, 500))
 
-      // Chụp ảnh canvas với độ phân giải được chọn
+      // Chụp ảnh canvas với độ phân giải cao cố định
       console.log('Bắt đầu html2canvas...')
       const pixelRatio = window.devicePixelRatio || 1
+      const scale = Math.max(5, pixelRatio * 3) // Cố định 5x+
 
-      // Tính scale dựa trên lựa chọn
-      let scale
-      switch(selectedResolution) {
-        case 'ultra':
-          scale = Math.max(8, pixelRatio * 4) // Cực cao: 8x+
-          break
-        case 'high':
-          scale = Math.max(5, pixelRatio * 3) // Cao: 5x+
-          break
-        case 'medium':
-          scale = Math.max(3, pixelRatio * 2) // Trung bình: 3x+
-          break
-        default:
-          scale = Math.max(5, pixelRatio * 3)
-      }
-
-      console.log(`Sử dụng scale: ${scale}x (${selectedResolution} resolution, devicePixelRatio: ${pixelRatio})`)
+      console.log(`Sử dụng scale: ${scale}x (devicePixelRatio: ${pixelRatio})`)
 
       const canvas = await html2canvas(canvasRef.current, {
         backgroundColor: '#ffffff',
@@ -201,7 +241,7 @@ const GalleryPage = () => {
         width: canvasRef.current.offsetWidth,
         height: canvasRef.current.offsetHeight,
         foreignObjectRendering: true,
-        imageTimeout: selectedResolution === 'ultra' ? 120000 : 60000, // Ultra: 2 phút, khác: 1 phút
+        imageTimeout: 60000, // 1 phút
         onclone: (clonedDoc) => {
           // Đảm bảo fonts được load trong cloned document
           const style = clonedDoc.createElement('style')
@@ -224,8 +264,7 @@ const GalleryPage = () => {
       console.log('DataURL length:', dataURL.length)
 
       const link = document.createElement('a')
-      const resolutionLabel = selectedResolution.toUpperCase()
-      link.download = `AK25-Canvas-${resolutionLabel}-${scale}x-${new Date().toISOString().split('T')[0]}.png`
+      link.download = `AK25-Canvas-${scale}x-${new Date().toISOString().split('T')[0]}.png`
       link.href = dataURL
 
       // Trigger download
@@ -337,25 +376,13 @@ const GalleryPage = () => {
             >
               <span>History</span>
             </Link>
-            <div className="flex items-center gap-2">
-              <select
-                value={selectedResolution}
-                onChange={(e) => setSelectedResolution(e.target.value)}
-                disabled={isCapturing}
-                className="px-3 py-2 rounded-lg bg-white/10 text-white border border-white/20 text-sm disabled:opacity-50"
-              >
-                <option value="medium" className="text-black">3x+ (Medium)</option>
-                <option value="high" className="text-black">5x+ (High)</option>
-                <option value="ultra" className="text-black">8x+ (Ultra)</option>
-              </select>
-              <button
-                onClick={handleCaptureImage}
-                disabled={isCapturing || signatures.length === 0}
-                className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
-              >
-                <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
-              </button>
-            </div>
+            <button
+              onClick={handleCaptureImage}
+              disabled={isCapturing || signatures.length === 0}
+              className="group flex items-center gap-3 px-6 py-3 rounded-xl font-medium text-white hover:bg-green-500/20 transition-all duration-300 hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed border border-green-500/30 hover:border-green-400/50"
+            >
+              <span>{isCapturing ? '📷 Đang chụp...' : '🖨️ In Canvas'}</span>
+            </button>
           </div>
         </nav>
 
@@ -411,9 +438,18 @@ const GalleryPage = () => {
               <div
                 ref={canvasRef}
                 className="zoom-container relative w-full h-[400px] md:h-[600px] lg:h-[700px] bg-white rounded-xl border-2 border-gray-300 overflow-auto"
-                onMouseMove={handleMouseMove}
-                onMouseUp={handleMouseUp}
-                onMouseLeave={handleMouseUp}
+                onMouseMove={(e) => {
+                  handleMouseMove(e)
+                  handleResizeMove(e)
+                }}
+                onMouseUp={() => {
+                  handleMouseUp()
+                  handleResizeEnd()
+                }}
+                onMouseLeave={() => {
+                  handleMouseUp()
+                  handleResizeEnd()
+                }}
                 onWheel={handleWheel}
                 style={{ cursor: zoomLevel > 1 ? 'grab' : 'default' }}
               >
@@ -429,6 +465,7 @@ const GalleryPage = () => {
                 {signatures.map((signature) => {
                   const x = signature.position?.x || Math.random() * 800
                   const y = signature.position?.y || Math.random() * 500
+                  const scale = signature.scale || 1
 
                   return (
                     <div
@@ -439,7 +476,12 @@ const GalleryPage = () => {
                         ${isAdmin ? 'cursor-move hover:scale-105' : 'cursor-default'}
                         transition-transform duration-200
                       `}
-                      style={{ left: x, top: y }}
+                      style={{
+                        left: x,
+                        top: y,
+                        transform: `scale(${scale})`,
+                        transformOrigin: 'top left'
+                      }}
                       onMouseDown={(e) => handleMouseDown(e, signature)}
                       onTouchStart={() => handleTouchStart(signature)}
                     >
@@ -487,6 +529,15 @@ const GalleryPage = () => {
                            signature.type === 'student' ? '🎓' : '👨‍🏫'}
                         </span>
                       </div>
+
+                      {/* Resize handle - chỉ hiện khi admin */}
+                      {isAdmin && (
+                        <div
+                          className="absolute -bottom-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full cursor-nw-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-white shadow-lg"
+                          onMouseDown={(e) => handleResizeStart(e, signature)}
+                          title="Drag to resize"
+                        />
+                      )}
                     </div>
                   )
                 })}

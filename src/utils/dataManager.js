@@ -159,6 +159,28 @@ export class DataManager {
     }
   }
 
+  static async updateSignatureScale(signatureId, newScale) {
+    try {
+      const response = await fetch(`${this.API_BASE}/signatures/${signatureId}/scale`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ scale: newScale })
+      })
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+
+      const result = await response.json()
+      return result.success
+    } catch (error) {
+      console.error('Lỗi khi cập nhật kích thước:', error)
+      return false
+    }
+  }
+
   static getSignatureImage(signatureId) {
     // Trả về URL ảnh từ server
     if (typeof window === 'undefined') return `http://localhost:3001/signatures/${signatureId}.png`

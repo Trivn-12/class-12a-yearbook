@@ -322,6 +322,30 @@ app.put('/api/signatures/:id/position', (req, res) => {
   }
 })
 
+// API: Cập nhật kích thước chữ ký
+app.put('/api/signatures/:id/scale', (req, res) => {
+  try {
+    const { id } = req.params
+    const { scale } = req.body
+
+    const data = loadData()
+    const signature = data.signatures.find(s => s.id === id)
+
+    if (!signature) {
+      return res.status(404).json({ error: 'Không tìm thấy chữ ký' })
+    }
+
+    signature.scale = scale
+    saveData(data)
+
+    res.json({ success: true })
+
+  } catch (error) {
+    console.error('Lỗi cập nhật kích thước:', error)
+    res.status(500).json({ error: 'Lỗi server khi cập nhật kích thước' })
+  }
+})
+
 // API: Xóa chữ ký đã duyệt
 app.delete('/api/signatures/:id', (req, res) => {
   try {
