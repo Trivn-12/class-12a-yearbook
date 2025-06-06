@@ -234,6 +234,14 @@ const GalleryPage = () => {
         tooltip.style.visibility = 'visible'
       })
 
+      // Ẩn border và background của signatures khi chụp
+      const signatureItems = canvasRef.current.querySelectorAll('.signature-item')
+      console.log('Found signature items:', signatureItems.length)
+      signatureItems.forEach(item => {
+        item.style.border = 'none'
+        item.style.backgroundColor = 'transparent'
+      })
+
       // Đợi tất cả ảnh load xong
       const images = canvasRef.current.querySelectorAll('img')
       console.log('Found images:', images.length)
@@ -281,11 +289,12 @@ const GalleryPage = () => {
         foreignObjectRendering: true,
         imageTimeout: 60000, // 1 phút
         onclone: (clonedDoc) => {
-          // Đảm bảo fonts được load trong cloned document
+          // Đảm bảo fonts được load và ẩn border trong cloned document
           const style = clonedDoc.createElement('style')
           style.textContent = `
             @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
             * { font-family: 'Inter', sans-serif !important; }
+            .signature-item { border: none !important; background-color: transparent !important; }
           `
           clonedDoc.head.appendChild(style)
         }
@@ -312,10 +321,17 @@ const GalleryPage = () => {
 
       setMessage(`✅ Đã tải ảnh canvas độ phân giải cao (${canvas.width}x${canvas.height}) thành công!`)
 
-      // Khôi phục trạng thái tooltips
+      // Khôi phục trạng thái tooltips và signature items
       tooltips.forEach(tooltip => {
         tooltip.style.opacity = ''
         tooltip.style.visibility = ''
+      })
+
+      // Khôi phục border và background của signatures
+      const signatureItems = canvasRef.current.querySelectorAll('.signature-item')
+      signatureItems.forEach(item => {
+        item.style.border = ''
+        item.style.backgroundColor = ''
       })
 
     } catch (error) {
@@ -512,7 +528,7 @@ const GalleryPage = () => {
                     <div
                       key={signature.id}
                       className={`
-                        group relative w-32 h-20 p-2 rounded-lg border-2
+                        signature-item group relative w-32 h-20 p-2 rounded-lg border-2
                         ${signature.type === 'student' ? 'border-blue-400 bg-blue-100/20' : 'border-red-400 bg-red-100/20'}
                         ${isAdmin ? 'cursor-move hover:scale-105' : 'cursor-default'}
                         transition-transform duration-200
