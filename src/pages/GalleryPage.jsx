@@ -23,6 +23,42 @@ const GalleryPage = () => {
     loadSignatures()
   }, [])
 
+  // Keyboard shortcuts cho resize
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (!isAdmin || !touchedSignature) return
+
+      if (e.key === '+' || e.key === '=') {
+        e.preventDefault()
+        // Phóng to
+        setSignatures(prev => prev.map(sig =>
+          sig.id === touchedSignature
+            ? { ...sig, scale: Math.min(5, (sig.scale || 1) + 0.1) }
+            : sig
+        ))
+      } else if (e.key === '-') {
+        e.preventDefault()
+        // Thu nhỏ
+        setSignatures(prev => prev.map(sig =>
+          sig.id === touchedSignature
+            ? { ...sig, scale: Math.max(0.3, (sig.scale || 1) - 0.1) }
+            : sig
+        ))
+      } else if (e.key === '0') {
+        e.preventDefault()
+        // Reset về 1x
+        setSignatures(prev => prev.map(sig =>
+          sig.id === touchedSignature
+            ? { ...sig, scale: 1 }
+            : sig
+        ))
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [isAdmin, touchedSignature])
+
   const loadSignatures = async () => {
     try {
       const data = await DataManager.loadData()
@@ -119,28 +155,29 @@ const GalleryPage = () => {
     if (!isAdmin) return
     e.stopPropagation() // Ngăn drag
 
-    const rect = canvasRef.current.getBoundingClientRect()
     setResizingSignature(signature)
     setResizeStartPos({
-      x: (e.clientX - rect.left) / zoomLevel,
-      y: (e.clientY - rect.top) / zoomLevel
+      x: e.clientX,
+      y: e.clientY,
+      initialScale: signature.scale || 1
     })
   }
 
   const handleResizeMove = (e) => {
     if (!isAdmin || !resizingSignature) return
 
-    const rect = canvasRef.current.getBoundingClientRect()
-    const currentX = (e.clientX - rect.left) / zoomLevel
-    const currentY = (e.clientY - rect.top) / zoomLevel
+    const deltaX = e.clientX - resizeStartPos.x
+    const deltaY = e.clientY - resizeStartPos.y
 
-    const deltaX = currentX - resizeStartPos.x
-    const deltaY = currentY - resizeStartPos.y
-    const delta = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
+    // Tính khoảng cách di chuyển
+    const distance = Math.sqrt(deltaX * deltaX + deltaY * deltaY)
 
-    // Tính scale mới (tối thiểu 0.5x, tối đa 3x)
-    const baseScale = resizingSignature.scale || 1
-    const newScale = Math.max(0.5, Math.min(3, baseScale + delta * 0.01))
+    // Xác định hướng (phóng to hay thu nhỏ)
+    const direction = deltaX + deltaY > 0 ? 1 : -1
+
+    // Tính scale mới
+    const scaleFactor = 1 + (direction * distance * 0.002) // Sensitivity
+    const newScale = Math.max(0.3, Math.min(5, resizeStartPos.initialScale * scaleFactor))
 
     // Cập nhật scale tạm thời
     setSignatures(prev => prev.map(sig =>
@@ -157,7 +194,8 @@ const GalleryPage = () => {
       const signature = signatures.find(s => s.id === resizingSignature.id)
       if (signature) {
         await DataManager.updateSignatureScale(resizingSignature.id, signature.scale || 1)
-        setMessage('✅ Đã thay đổi kích thước thành công!')
+        setMessage(`✅ Đã thay đổi kích thước thành ${(signature.scale || 1).toFixed(1)}x!`)
+        setTimeout(() => setMessage(''), 2000)
       }
     } catch (error) {
       console.error('Lỗi khi thay đổi kích thước:', error)
@@ -165,7 +203,7 @@ const GalleryPage = () => {
     }
 
     setResizingSignature(null)
-    setResizeStartPos({ x: 0, y: 0 })
+    setResizeStartPos({ x: 0, y: 0, initialScale: 1 })
   }
 
   // Function để chụp ảnh gallery - in tất cả mọi thứ
@@ -390,15 +428,18 @@ const GalleryPage = () => {
         {isAdmin && (
           <div className="text-center mb-6">
             <div className="inline-flex items-center gap-3 bg-red-500/20 border border-red-400/30 rounded-2xl px-6 py-3 backdrop-blur-sm">
-              <span className="text-white font-semibold">Admin Mode - Drag and drop to rearrange</span>
+              <span className="text-white font-semibold">Admin Mode - Drag to move, Resize handle to scale</span>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 space-y-2">
               <Link
                 to="/gallery"
                 className="inline-flex items-center gap-2 px-4 py-2 bg-white/20 hover:bg-white/30 rounded-xl text-white transition-all duration-300 hover:scale-105"
               >
                 Switch to normal view
               </Link>
+              <div className="text-white/70 text-sm">
+                💡 Hover signature → Drag yellow handle to resize | Keys: +/- to scale, 0 to reset
+              </div>
             </div>
           </div>
         )}
@@ -533,18 +574,27 @@ const GalleryPage = () => {
                       {/* Resize handle - chỉ hiện khi admin */}
                       {isAdmin && (
                         <div
-                          className="absolute -bottom-1 -right-1 w-3 h-3 bg-yellow-500 rounded-full cursor-nw-resize opacity-0 group-hover:opacity-100 transition-opacity duration-200 border border-white shadow-lg"
+                          className="absolute -bottom-2 -right-2 w-4 h-4 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full cursor-se-resize opacity-0 group-hover:opacity-100 transition-all duration-200 border-2 border-white shadow-lg hover:scale-110 flex items-center justify-center"
                           onMouseDown={(e) => handleResizeStart(e, signature)}
-                          title="Drag to resize"
-                        />
+                          title={`Resize (current: ${(signature.scale || 1).toFixed(1)}x)`}
+                        >
+                          <div className="w-1 h-1 bg-white rounded-full"></div>
+                        </div>
+                      )}
+
+                      {/* Scale indicator */}
+                      {isAdmin && (signature.scale && signature.scale !== 1) && (
+                        <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-black/70 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                          {(signature.scale).toFixed(1)}x
+                        </div>
                       )}
                     </div>
                   )
                 })}
 
                 {isAdmin && (
-                  <div className="absolute bottom-2 right-2 text-white/50 text-xs">
-                    Drag and drop to rearrange signatures
+                  <div className="absolute bottom-2 right-2 text-white/50 text-xs max-w-48 text-right">
+                    Drag to move • Resize handle to scale • +/- keys to adjust
                   </div>
                 )}
                 </div>
